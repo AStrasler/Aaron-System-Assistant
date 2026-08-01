@@ -21,19 +21,20 @@ A professional, modular Windows maintenance and diagnostics utility written in *
 ## 🚀 Quick Start
 
 1. Download the latest release or clone the repo.
-2. Extract and **run `ASU.bat` as Administrator**.
+2. Extract and run `ASU.bat`. If you plan to use repair features (SFC/DISM/CHKDSK), run the launcher with Administrator rights (Right-click → Run as administrator).
 3. Use the menu-driven interface.
 
 ## 📁 Project Structure
 
 Aaron-System-Utility/
-├── ASU.bat              # Launcher
-├── ASU.ps1              # Main script
-├── Modules/             # All functionality
-├── Config/settings.json
-├── Reports/ & Logs/     # Generated
-├── README.md
-└── LICENSE
+- ASU.bat              — Launcher (double-click to open PowerShell and run ASU)
+- ASU.ps1              — Main script and interactive menu
+- *.psm1               — Module files (Battery.psm1, Cleanup.psm1, Memory.psm1, Network.psm1, Storage.psm1, Updates.psm1, Startup.psm1, Reports.psm1, Utilities.psm1, WindowsRepair.psm1)
+- config.json          — Optional configuration file at the repository root (see Configuration)
+- Reports/             — Generated HTML reports (created at runtime)
+- tools/               — Utility scripts for testing and linting
+- README.md
+- LICENSE
 
 ## Requirements
 
@@ -43,7 +44,15 @@ Aaron-System-Utility/
  
 ## Configuration
 
-- The utility reads `config.json` (created at the repo root as `config.json`). You can change `LoggingLevel` (`Info`, `Warning`, `Error`) and `ReportPath` in the file to control behavior and output locations.
+- The utility reads `config.json` from the repository root. You can change `LoggingLevel` (`Info`, `Warning`, `Error`) and `ReportPath` in that file to control behavior and output locations. Example:
+
+```json
+{
+	"LoggingLevel": "Info",
+	"ReportPath": "Reports",
+	"PingTarget": "8.8.8.8"
+}
+```
 
 ## Safety and Usability
 
@@ -61,10 +70,9 @@ Contributions, issues, and feature requests welcome!
 
 ## 📂 Double-click Launcher
 
-If you want to open ASU by double-clicking a file, use the provided `launcher.bat` or create a shortcut:
+If you want to open ASU by double-clicking a file, use the provided `launcher.bat` or create a shortcut. `launcher.bat` does not auto-elevate; to run repair tasks you must run the launcher as Administrator.
 
-- Double-click `launcher.bat` (located next to `ASU.ps1`) to open PowerShell and run ASU while keeping the window open.
-- Contents of `launcher.bat`:
+Contents of `launcher.bat`:
 
 ```bat
 @echo off
