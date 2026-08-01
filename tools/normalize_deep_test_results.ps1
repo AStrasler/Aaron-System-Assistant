@@ -23,10 +23,10 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
-                        # stable ordering
-                        if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Name }
                         if ($cols.Count -ge 2) { $data += @{ Name=$cols[0]; MemoryMB = [double]($cols[1] -replace ',','') } }
                     }
+                    # stable ordering
+                    if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Name }
                 }
                 $norm += @{ Type='Function'; Function=$f; Data=$data }
             }
@@ -37,10 +37,10 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
-                        # stable ordering
-                        if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Destination,Source }
                         if ($cols.Count -ge 4) { $data += @{ Source=$cols[0]; Destination=$cols[1]; IPV4=$cols[2]; Bytes=$cols[3]; TimeMs = if ($cols.Count -gt 4) { [int]($cols[4]) } else { $null } } }
                     }
+                    # stable ordering
+                    if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Destination,Source }
                 }
                 $norm += @{ Type='Function'; Function=$f; Data=$data }
             }
@@ -51,10 +51,10 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
-                        # stable ordering
-                        if ($data.Count -gt 0) { $data = $data | Sort-Object -Property FriendlyName }
                         if ($cols.Count -ge 4) { $data += @{ FriendlyName=$cols[0]; MediaType=$cols[1]; Size=$cols[2]; Health=$cols[3] } }
                     }
+                    # stable ordering
+                    if ($data.Count -gt 0) { $data = $data | Sort-Object -Property FriendlyName }
                 }
                 $norm += @{ Type='Function'; Function=$f; Data=$data }
             }
@@ -65,10 +65,10 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
-                        # stable ordering
-                        if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Name }
                         if ($cols.Count -ge 2) { $data += @{ Name=$cols[0]; Command=$cols[1] } }
                     }
+                    # stable ordering
+                    if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Name }
                 }
                 $norm += @{ Type='Function'; Function=$f; Data=$data }
             }
