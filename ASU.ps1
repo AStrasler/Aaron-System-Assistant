@@ -12,19 +12,8 @@
 # Get the script directory
 $ScriptPath = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
-# Load optional configuration
-$ConfigPath = Join-Path $ScriptPath 'config.json'
-if (Test-Path $ConfigPath) {
-    try {
-        $Global:ASUConfig = Get-Content $ConfigPath -Raw | ConvertFrom-Json
-    } catch {
-        Write-Warning "Failed to parse config.json: $($_.Exception.Message)"
-    }
-}
-
-# Set defaults
-$Global:ReportPath = if ($Global:ASUConfig -and $Global:ASUConfig.ReportPath) { $Global:ASUConfig.ReportPath } else { Join-Path $ScriptPath 'Reports' }
-$Global:LoggingLevel = if ($Global:ASUConfig -and $Global:ASUConfig.LoggingLevel) { $Global:ASUConfig.LoggingLevel } else { 'Info' }
+# Import config accessor module (loads config.json for the repo)
+Import-Module "$ScriptPath\Config.psm1" -Force
 
 # Import all modules
 Import-Module "$ScriptPath\Battery.psm1" -Force
@@ -50,7 +39,8 @@ function Write-ASULog {
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     # Respect configured logging level (Error > Warning > Info)
     $levelPriority = @{ 'Info' = 1; 'Warning' = 2; 'Error' = 3 }
-    $current = if ($Global:LoggingLevel -and $levelPriority.ContainsKey($Global:LoggingLevel)) { $levelPriority[$Global:LoggingLevel] } else { 1 }
+    $configured = Get-ASULoggingLevel
+    $current = if ($configured -and $levelPriority.ContainsKey($configured)) { $levelPriority[$configured] } else { 1 }
     $msgLevel = if ($levelPriority.ContainsKey($Level)) { $levelPriority[$Level] } else { 1 }
     if ($msgLevel -lt $current) { return }
 
@@ -176,3 +166,4 @@ function Show-MainMenu {
 
 # Start the utility
 Show-MainMenu
+
