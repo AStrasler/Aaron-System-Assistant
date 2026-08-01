@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["Type","Module","Imported"],
+        "properties": {
+          "Type": { "const": "Module" },
+          "Module": { "type": "string" },
+          "Imported": { "type": "boolean" },
+          "Error": { "type": ["null","string"] }
+        }
+      },
+      {
+        "type": "object",
+        "required": ["Type","Function","Data"],
+        "properties": {
+          "Type": { "const": "Function" },
+          "Function": { "type": "string" },
+          "Data": { "type": ["object","array"] }
+        }
+      }
+    ]
+  }
+}

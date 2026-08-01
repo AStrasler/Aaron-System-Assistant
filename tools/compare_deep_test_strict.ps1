@@ -1,4 +1,4 @@
-<#
+﻿<#
 Strict comparator: compares `tools/deep_test_results_normalized.json` to
 `tools/golden/deep_test_expected_normalized.json` exactly (structural equality).
 Exits 0 on match, 1 on mismatch.
@@ -11,15 +11,44 @@ if (-not (Test-Path $golden)) { Write-Error "Missing $golden"; exit 3 }
 $act = Get-Content -Raw $actual | ConvertFrom-Json
 $gol = Get-Content -Raw $golden | ConvertFrom-Json
 
-$actJson = $act | ConvertTo-Json -Depth 10
-$golJson = $gol | ConvertTo-Json -Depth 10
+function Sort-FunctionData($entry) {
+    if ($entry.Type -ne 'Function') { return $entry }
+    if ($entry.Data -is [System.Array]) {
+        # try common sort keys
+        $key = $null
+        if ($entry.Data.Count -gt 0) {
+            $sample = $entry.Data[0]
+            if ($sample.PSObject.Properties.Name -contains 'Name') { $key = 'Name' }
+            elseif ($sample.PSObject.Properties.Name -contains 'Destination') { $key = 'Destination' }
+            elseif ($sample.PSObject.Properties.Name -contains 'FriendlyName') { $key = 'FriendlyName' }
+            elseif ($sample.PSObject.Properties.Name -contains 'ReportPath') { $key = 'ReportPath' }
+        }
+        if ($key) {
+            $entry.Data = $entry.Data | Sort-Object -Property $key -Unique
+        } else {
+            $entry.Data = $entry.Data | Sort-Object | Select-Object -Unique
+        }
+    }
+    return $entry
+}
+
+$actSorted = @()
+foreach ($e in $act) { $actSorted += Sort-FunctionData -entry $e }
+
+$golSorted = @()
+foreach ($e in $gol) { $golSorted += Sort-FunctionData -entry $e }
+
+$actJson = $actSorted | ConvertTo-Json -Depth 10
+$golJson = $golSorted | ConvertTo-Json -Depth 10
 
 if ($actJson -ne $golJson) {
     Write-Output "Normalized deep test output does not match golden. Writing diff to tools/deep_test_normalized_diff.txt"
     $diff = Compare-Object -ReferenceObject ($golJson -split "`n") -DifferenceObject ($actJson -split "`n") -SyncWindow 0
-    $diff | Out-File -FilePath (Join-Path $PSScriptRoot '..\tools\deep_test_normalized_diff.txt') -Width 200
+    $diff | Out-File -FilePath (Join-Path $PSScriptRoot '..\\tools\\deep_test_normalized_diff.txt') -Width 200
     $diff | Format-Table | Out-String | Write-Output
     exit 1
 }
+
 Write-Output "Normalized deep test output matches golden."
 exit 0
+

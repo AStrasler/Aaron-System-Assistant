@@ -24,6 +24,31 @@ A professional, modular Windows maintenance and diagnostics utility written in *
 2. Extract and run `ASU.bat`. If you plan to use repair features (SFC/DISM/CHKDSK), run the launcher with Administrator rights (Right-click → Run as administrator).
 3. Use the menu-driven interface.
 
+## Testing and Validation
+
+- Run non-interactive deep tests (safe):
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\run_deep_tests.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\normalize_deep_test_results.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\compare_deep_test_strict.ps1
+```
+
+- Validate normalized output against schema:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_deep_test_schema.ps1
+```
+
+## Repair Commands (safe-by-default)
+
+Two repair helpers are available in `WindowsRepair.psm1`:
+
+- `Repair-WindowsSfc` — runs `sfc /scannow`. Requires administrator privileges and confirms before running unless `-Force` is provided.
+- `Repair-WindowsDism` — runs `DISM /Online /Cleanup-Image /RestoreHealth`. Requires admin and explicit confirmation unless `-Force` is used.
+
+Both are conservative: they only run when confirmed and are logged via `Write-ASULog`.
 ## 📁 Project Structure
 
 Aaron-System-Utility/
