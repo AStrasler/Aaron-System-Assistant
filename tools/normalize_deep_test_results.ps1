@@ -1,4 +1,4 @@
-<#
+﻿<#
 Normalize `tools/deep_test_results.json` into structured JSON suitable for strict comparison.
 Produces `tools/deep_test_results_normalized.json`.
 #>
@@ -23,6 +23,8 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
+                        # stable ordering
+                        if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Name }
                         if ($cols.Count -ge 2) { $data += @{ Name=$cols[0]; MemoryMB = [double]($cols[1] -replace ',','') } }
                     }
                 }
@@ -35,6 +37,8 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
+                        # stable ordering
+                        if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Destination,Source }
                         if ($cols.Count -ge 4) { $data += @{ Source=$cols[0]; Destination=$cols[1]; IPV4=$cols[2]; Bytes=$cols[3]; TimeMs = if ($cols.Count -gt 4) { [int]($cols[4]) } else { $null } } }
                     }
                 }
@@ -47,6 +51,8 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
+                        # stable ordering
+                        if ($data.Count -gt 0) { $data = $data | Sort-Object -Property FriendlyName }
                         if ($cols.Count -ge 4) { $data += @{ FriendlyName=$cols[0]; MediaType=$cols[1]; Size=$cols[2]; Health=$cols[3] } }
                     }
                 }
@@ -59,6 +65,8 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
+                        # stable ordering
+                        if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Name }
                         if ($cols.Count -ge 2) { $data += @{ Name=$cols[0]; Command=$cols[1] } }
                     }
                 }
@@ -80,3 +88,4 @@ foreach ($item in $raw) {
 $norm | ConvertTo-Json -Depth 10 | Out-File -FilePath $outPath -Encoding UTF8
 Write-Output "Wrote normalized output to $outPath"
 exit 0
+
