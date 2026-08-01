@@ -38,6 +38,16 @@ Assert-Contains -name 'Show-NetworkMenu' -mustContain @('Source','Destination')
 Assert-Contains -name 'Show-StorageMenu' -mustContain @('FriendlyName','MediaType')
 Assert-Contains -name 'Show-StartupMenu' -mustContain @('Name','Command')
 
+# Fail if any module still contains the word 'placeholder' (case-insensitive)
+$repoRoot = Split-Path -Path $PSScriptRoot -Parent
+$moduleFiles = Get-ChildItem -Path $repoRoot -Filter '*.psm1' -File -ErrorAction SilentlyContinue
+foreach ($f in $moduleFiles) {
+    $text = Get-Content -LiteralPath $f.FullName -Raw -ErrorAction SilentlyContinue
+    if ($text -match '(?i)placeholder') {
+        $failures += "Module contains placeholder token: $($f.Name)"
+    }
+}
+
 if ($failures.Count -gt 0) {
     Write-Output "Deep test checks failed; writing details to tools/deep_test_golden_diff.txt"
     $failures | Out-File -FilePath (Join-Path -Path $PSScriptRoot -ChildPath '..\\tools\\deep_test_golden_diff.txt') -Width 160
