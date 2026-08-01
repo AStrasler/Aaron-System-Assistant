@@ -1,30 +1,31 @@
 <# 
 .SYNOPSIS
-    Hardware diagnostics module for ASU
+    Reports module for ASU
 #>
 
-function Show-HardwareMenu {
+function Show-ReportsMenu {
     Clear-Host
-    Write-Host "=== Hardware Diagnostics ===" -ForegroundColor Cyan
+    Write-Host "=== Generate Reports ===" -ForegroundColor Cyan
+    $defaultPath = Join-Path (Split-Path -Parent $PSScriptRoot) "Reports"
+    $ReportPath = if ($Global:ReportPath) { Join-Path (Split-Path -Parent $PSScriptRoot) $Global:ReportPath } else { $defaultPath }
+    if (-not (Test-Path $ReportPath)) { New-Item -Path $ReportPath -ItemType Directory -Force | Out-Null }
     
-    # Get system info
-    $ComputerSystem = Get-CimInstance Win32_ComputerSystem
-    $BIOS = Get-CimInstance Win32_BIOS
-    $CPU = Get-CimInstance Win32_Processor | Select-Object -First 1
-    $GPU = Get-CimInstance Win32_VideoController | Where-Object { $_.Name -notlike "*Microsoft*" } | Select-Object -First 1
+    $ReportFile = Join-Path $ReportPath "ASU_Report_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
     
-    Write-Host "Manufacturer: $($ComputerSystem.Manufacturer)" -ForegroundColor White
-    Write-Host "Model: $($ComputerSystem.Model)" -ForegroundColor White
-    Write-Host "Motherboard: $( (Get-CimInstance Win32_BaseBoard).Product )" -ForegroundColor White
-    Write-Host "BIOS Version: $($BIOS.Version)" -ForegroundColor White
-    Write-Host "CPU: $($CPU.Name) ($($CPU.NumberOfCores) cores)" -ForegroundColor White
-    if ($GPU) {
-        Write-Host "GPU: $($GPU.Name)" -ForegroundColor White
-    }
+    # Basic HTML report
+    @"
+<html><head><title>ASU System Report</title></head><body>
+<h1>Aaron System Utility Report</h1>
+<p>Generated: $(Get-Date)</p>
+<h2>System Info</h2>
+<pre>$(Get-ComputerInfo | Out-String)</pre>
+</body></html>
+"@ | Out-File $ReportFile -Encoding UTF8
     
-    Write-ASULog "Hardware diagnostics viewed" -Level "Info"
+    Write-Host "HTML Report generated: $ReportFile" -ForegroundColor Green
+    Write-ASULog "Report generated: $ReportFile" -Level "Info"
     Pause
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-HardwareMenu
+Export-ModuleMember -Function Show-ReportsMenu

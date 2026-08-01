@@ -40,6 +40,15 @@ Aaron-System-Utility/
 - Windows 10 / 11
 - PowerShell 5.1 (pre-installed)
 - Administrator rights for repairs
+ 
+## Configuration
+
+- The utility reads `config.json` (created at the repo root as `config.json`). You can change `LoggingLevel` (`Info`, `Warning`, `Error`) and `ReportPath` in the file to control behavior and output locations.
+
+## Safety and Usability
+
+- Cleanup operations now prompt for confirmation and support a dry-run option (select `D` at the prompt) so you can preview destructive actions.
+- The launcher and README clearly indicate Administrator rights are required for repair operations; use the provided `launcher.bat` or create an elevated shortcut.
 
 ## License
 

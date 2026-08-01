@@ -10,6 +10,20 @@
 # Get the script directory
 $ScriptPath = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
+# Load optional configuration
+$ConfigPath = Join-Path $ScriptPath 'config.json'
+if (Test-Path $ConfigPath) {
+    try {
+        $Global:ASUConfig = Get-Content $ConfigPath -Raw | ConvertFrom-Json
+    } catch {
+        Write-Host "Warning: Failed to parse config.json: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
+}
+
+# Set defaults
+$Global:ReportPath = if ($Global:ASUConfig -and $Global:ASUConfig.ReportPath) { $Global:ASUConfig.ReportPath } else { Join-Path $ScriptPath 'Reports' }
+$Global:LoggingLevel = if ($Global:ASUConfig -and $Global:ASUConfig.LoggingLevel) { $Global:ASUConfig.LoggingLevel } else { 'Info' }
+
 # Import all modules
 Import-Module "$ScriptPath\Battery.psm1" -Force
 Import-Module "$ScriptPath\Cleanup.psm1" -Force
@@ -32,15 +46,19 @@ function Write-ASULog {
         [string]$Level = "Info"
     )
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    
-    # Simple console output for now
+    # Respect configured logging level (Error > Warning > Info)
+    $levelPriority = @{ 'Info' = 1; 'Warning' = 2; 'Error' = 3 }
+    $current = if ($Global:LoggingLevel -and $levelPriority.ContainsKey($Global:LoggingLevel)) { $levelPriority[$Global:LoggingLevel] } else { 1 }
+    $msgLevel = if ($levelPriority.ContainsKey($Level)) { $levelPriority[$Level] } else { 1 }
+    if ($msgLevel -lt $current) { return }
+
+    # Simple console output
     $Color = switch ($Level) {
         "Error" { "Red" }
         "Warning" { "Yellow" }
         "Info" { "Green" }
         default { "White" }
     }
-    
     Write-Host "[$Timestamp] [$Level] $Message" -ForegroundColor $Color
 }
 

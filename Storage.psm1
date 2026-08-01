@@ -1,29 +1,23 @@
 <# 
 .SYNOPSIS
-    Network diagnostics module for ASU
+    Storage health module for ASU
 #>
 
-function Show-NetworkMenu {
+function Show-StorageMenu {
     Clear-Host
-    Write-Host "=== Network Diagnostics ===" -ForegroundColor Cyan
+    Write-Host "=== Storage Health ===" -ForegroundColor Cyan
     
-    $IP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceIndex -ne 1}).IPAddress
-    Write-Host "Local IP: $IP" -ForegroundColor White
-    Write-Host "Gateway: $(Get-NetIPConfiguration | Select-Object -ExpandProperty IPv4DefaultGateway | Select-Object -ExpandProperty NextHop)" -ForegroundColor White
+    Get-PhysicalDisk | Format-Table FriendlyName, MediaType, Size, BusType, HealthStatus -AutoSize
     
-    try {
-        $PublicIP = Invoke-RestMethod -Uri 'https://api.ipify.org' -Method Get -ErrorAction Stop
-        Write-Host "Public IP: $PublicIP" -ForegroundColor White
-    } catch {
-        Write-Host "Public IP: Unavailable" -ForegroundColor Yellow
+    $Drives = Get-PSDrive -PSProvider FileSystem
+    foreach ($Drive in $Drives) {
+        $FreePercent = [math]::Round(($Drive.Free / $Drive.Used) * 100, 1)  # Note: simplistic
+        Write-Host "$($Drive.Name): $($Drive.Used/1GB) GB used, $($Drive.Free/1GB) GB free ($FreePercent% free)" -ForegroundColor $(if ($Drive.Free/1GB -lt 10) {"Red"} else {"Green"})
     }
     
-    Write-Host "`nRunning ping test to 8.8.8.8..." 
-    Test-Connection -ComputerName 8.8.8.8 -Count 4 -ErrorAction SilentlyContinue
-    
-    Write-ASULog "Network diagnostics performed" -Level "Info"
+    Write-ASULog "Storage diagnostics viewed" -Level "Info"
     Pause
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-NetworkMenu
+Export-ModuleMember -Function Show-StorageMenu

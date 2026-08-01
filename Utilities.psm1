@@ -1,16 +1,9 @@
-<# 
+<#
 .SYNOPSIS
-    Startup management module for ASU
+    Utilities module (deprecated placeholder)
+
+This file previously contained the startup module. The startup code has been
+moved to Startup.psm1 to match the module filename expected by ASU.
 #>
 
-function Show-StartupMenu {
-    Clear-Host
-    Write-Host "=== Startup Applications ===" -ForegroundColor Cyan
-    Get-CimInstance Win32_StartupCommand | Select-Object Name, Command, Location | Format-Table -AutoSize
-    Write-Host "`nNote: Use Task Manager or msconfig for management in this version." -ForegroundColor Yellow
-    Write-ASULog "Startup items viewed" -Level "Info"
-    Pause
-    Show-MainMenu
-}
-
-Export-ModuleMember -Function Show-StartupMenu
+Write-Verbose "Utilities.psm1 is a placeholder; see Startup.psm1 for startup tools." -Verbose
