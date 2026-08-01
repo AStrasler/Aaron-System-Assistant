@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Provides lightweight helper views for available utility scripts and quick
-    actions to inspect the `tools` folder. This replaces the old placeholder
+    actions to inspect the `tools` folder. This replaces previous deprecated
     behavior and surfaces available utilities to the user.
 #>
 
