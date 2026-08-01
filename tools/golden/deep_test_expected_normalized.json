@@ -83,24 +83,24 @@
         "Function":  "Show-MemoryMenu",
         "Data":  [
                      {
-                         "Name":  "Code",
-                         "MemoryMB":  174.71
-                     },
-                     {
-                         "Name":  "PhoneExperienceHost",
-                         "MemoryMB":  167.38
+                         "Name":  "Memory Compression",
+                         "MemoryMB":  150
                      },
                      {
                          "Name":  "MsMpEng",
-                         "MemoryMB":  274.43
+                         "MemoryMB":  150
+                     },
+                     {
+                         "Name":  "PhoneExperienceHost",
+                         "MemoryMB":  180
                      },
                      {
                          "Name":  "Code",
-                         "MemoryMB":  361.22
+                         "MemoryMB":  410
                      },
                      {
-                         "Name":  "TiWorker",
-                         "MemoryMB":  283.13
+                         "Name":  "Code",
+                         "MemoryMB":  340
                      }
                  ],
         "Type":  "Function"
@@ -110,28 +110,28 @@
         "Data":  [
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  12,
+                         "TimeMs":  null,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
                      },
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  9,
+                         "TimeMs":  null,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
                      },
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  10,
+                         "TimeMs":  null,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
                      },
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  12,
+                         "TimeMs":  null,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
@@ -196,7 +196,7 @@
     {
         "Function":  "Show-WindowsRepairMenu",
         "Data":  {
-                     "Raw":  "\nDriveLetter FriendlyName FreeGB SizeGB\n----------- ------------ ------ ------\n          C              372.37 474.72\n                           0.98   1.95\n\n\n\nFriendlyName                  MediaType         Size HealthStatus\n------------                  ---------         ---- ------------\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 Healthy     \n\n\n\nName      Status\n----      ------\nBits     Running\nwuauserv Running\n\n\n"
+                     "Raw":  "\nDriveLetter FriendlyName FreeGB SizeGB\n----------- ------------ ------ ------\n          C              373.84 474.72\n                           0.98   1.95\n\n\n\nFriendlyName                  MediaType         Size HealthStatus\n------------                  ---------         ---- ------------\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 Healthy     \n\n\n\nName      Status\n----      ------\nBits     Running\nwuauserv Running\n\n\n"
                  },
         "Type":  "Function"
     }
