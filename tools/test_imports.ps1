@@ -1,4 +1,4 @@
-$root = "c:\Users\aaron_lc3zh3u\Documents\GitHub\Aaron-System-Utility"
+﻿$root = "c:\Users\aaron_lc3zh3u\Documents\GitHub\Aaron-System-Utility"
 Get-ChildItem -Path $root -Filter *.psm1 -File | ForEach-Object {
     $path = $_.FullName
     Write-Output "Importing: $path"
@@ -15,3 +15,4 @@ Get-ChildItem -Path $root -Filter *.psm1 -File | ForEach-Object {
     }
 }
 Write-Output 'IMPORT_TEST_DONE'
+

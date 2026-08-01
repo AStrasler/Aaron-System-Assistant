@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Utilities module (deprecated placeholder)
 
@@ -7,3 +7,4 @@ moved to Startup.psm1 to match the module filename expected by ASU.
 #>
 
 Write-Verbose "Utilities.psm1 is a placeholder; see Startup.psm1 for startup tools." -Verbose
+

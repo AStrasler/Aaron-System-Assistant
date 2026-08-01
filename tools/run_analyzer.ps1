@@ -9,3 +9,4 @@ if (Test-Path $settings) {
 $r | ConvertTo-Json -Depth 6 | Out-File (Join-Path $PSScriptRoot 'analyzer_results.json') -Encoding UTF8
 Write-Output 'SAVED'
 
+
