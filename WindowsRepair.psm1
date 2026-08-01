@@ -1,8 +1,18 @@
-<# 
+﻿<#
 .SYNOPSIS
     Windows repair module for ASU (placeholder)
 #>
 
+<#
+.SYNOPSIS
+    Placeholder for Windows repair utilities.
+
+.DESCRIPTION
+    This module is currently a placeholder and does not implement repair routines.
+
+.EXAMPLE
+    Show-WindowsRepairMenu
+#>
 function Show-WindowsRepairMenu {
     Clear-Host
     Write-Host "=== Windows Repair (Not Implemented) ===" -ForegroundColor Cyan
@@ -12,3 +22,4 @@ function Show-WindowsRepairMenu {
 }
 
 Export-ModuleMember -Function Show-WindowsRepairMenu
+

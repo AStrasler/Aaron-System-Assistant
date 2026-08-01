@@ -3,6 +3,16 @@
     Reports module for ASU
 #>
 
+<#
+.SYNOPSIS
+    Generate an HTML system report and save it to the configured Reports directory.
+
+.DESCRIPTION
+    Produces a basic HTML report containing system information and saves it under the ASU reports folder.
+
+.EXAMPLE
+    Show-ReportsMenu
+#>
 function Show-ReportsMenu {
     Clear-Host
     $ReportPath = Get-ASUReportPath

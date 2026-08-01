@@ -49,6 +49,16 @@ function Write-ASULog {
 }
 
 # Main Menu Function
+<#
+.SYNOPSIS
+    Main interactive menu for Aaron System Utility.
+
+.DESCRIPTION
+    Displays the main menu and routes to individual module menus.
+
+.EXAMPLE
+    Show-MainMenu
+#>
 function Show-MainMenu {
     Clear-Host
     Write-Host "========================================" -ForegroundColor Cyan

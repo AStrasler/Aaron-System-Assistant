@@ -1,14 +1,25 @@
-<# 
+﻿<#
 .SYNOPSIS
 	Cleanup module for ASU
 #>
 
+
+<#
+.SYNOPSIS
+	Interactive system cleanup utility (temp files).
+
+.DESCRIPTION
+	Presents options to perform a dry-run or actual cleanup of temporary files under `$env:TEMP`.
+
+.EXAMPLE
+	Show-CleanupMenu
+#>
 function Show-CleanupMenu {
 	Clear-Host
 	Write-Host "=== System Cleanup ===" -ForegroundColor Cyan
 	Write-Host "Cleaning temporary files..." -ForegroundColor Yellow
 	Write-Host "This will remove files under $env:TEMP. Choose an option: [Y]es [N]o [D]ry-run" -ForegroundColor Yellow
-	$choice = Read-Host "Proceed? (Y/N/D)" 
+	$choice = Read-Host "Proceed? (Y/N/D)"
 	switch ($choice.ToUpper()) {
 		'D' {
 			Write-Host "Dry run: showing actions (no files will be deleted)." -ForegroundColor Cyan
@@ -29,10 +40,11 @@ function Show-CleanupMenu {
 			return
 		}
 	}
-    
+
 	Write-ASULog "System cleanup performed" -Level "Info"
 	Pause
 	Show-MainMenu
 }
 
 Export-ModuleMember -Function Show-CleanupMenu
+

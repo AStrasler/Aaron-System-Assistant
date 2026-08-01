@@ -1,8 +1,18 @@
-<# 
+﻿<#
 .SYNOPSIS
     Startup management module for ASU
 #>
 
+<#
+.SYNOPSIS
+    Display startup applications and related notes.
+
+.DESCRIPTION
+    Lists startup commands and suggests management tools for modification.
+
+.EXAMPLE
+    Show-StartupMenu
+#>
 function Show-StartupMenu {
     Clear-Host
     Write-Host "=== Startup Applications ===" -ForegroundColor Cyan
@@ -14,3 +24,4 @@ function Show-StartupMenu {
 }
 
 Export-ModuleMember -Function Show-StartupMenu
+
