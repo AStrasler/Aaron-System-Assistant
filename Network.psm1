@@ -3,7 +3,6 @@
     Network diagnostics module for ASU
 #>
 
-# PSScriptAnalyzerSuppressMessage -RuleName PSAvoidUsingWriteHost -Justification 'Interactive console output intentional for menu UI'
 <#
 .SYNOPSIS
     Show interactive network diagnostics and basic connectivity tests.
