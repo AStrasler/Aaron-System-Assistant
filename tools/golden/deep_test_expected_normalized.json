@@ -84,23 +84,23 @@
         "Data":  [
                      {
                          "Name":  "Code",
-                         "MemoryMB":  417.45
-                     },
-                     {
-                         "Name":  "svchost",
-                         "MemoryMB":  345.21
-                     },
-                     {
-                         "Name":  "MsMpEng",
-                         "MemoryMB":  207.21
-                     },
-                     {
-                         "Name":  "PhoneExperienceHost",
-                         "MemoryMB":  168.21
+                         "MemoryMB":  361.14
                      },
                      {
                          "Name":  "Code",
-                         "MemoryMB":  148.4
+                         "MemoryMB":  269.98
+                     },
+                     {
+                         "Name":  "MsMpEng",
+                         "MemoryMB":  191.08
+                     },
+                     {
+                         "Name":  "PhoneExperienceHost",
+                         "MemoryMB":  174.68
+                     },
+                     {
+                         "Name":  "Memory Compression",
+                         "MemoryMB":  152.88
                      }
                  ],
         "Type":  "Function"
@@ -110,21 +110,7 @@
         "Data":  [
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  11,
-                         "Source":  "AARON",
-                         "IPV4":  "8.8.8.8",
-                         "Bytes":  "32"
-                     },
-                     {
-                         "Destination":  "8.8.8.8",
-                         "TimeMs":  7,
-                         "Source":  "AARON",
-                         "IPV4":  "8.8.8.8",
-                         "Bytes":  "32"
-                     },
-                     {
-                         "Destination":  "8.8.8.8",
-                         "TimeMs":  8,
+                         "TimeMs":  19,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
@@ -132,6 +118,20 @@
                      {
                          "Destination":  "8.8.8.8",
                          "TimeMs":  10,
+                         "Source":  "AARON",
+                         "IPV4":  "8.8.8.8",
+                         "Bytes":  "32"
+                     },
+                     {
+                         "Destination":  "8.8.8.8",
+                         "TimeMs":  15,
+                         "Source":  "AARON",
+                         "IPV4":  "8.8.8.8",
+                         "Bytes":  "32"
+                     },
+                     {
+                         "Destination":  "8.8.8.8",
+                         "TimeMs":  8,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
@@ -198,7 +198,7 @@
     {
         "Function":  "Show-WindowsRepairMenu",
         "Data":  {
-                     "Raw":  "\nDriveLetter FriendlyName FreeGB SizeGB\n----------- ------------ ------ ------\n          C              373.42 474.72\n                           0.98   1.95\n\n\n\nFriendlyName                  MediaType         Size HealthStatus\n------------                  ---------         ---- ------------\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 Healthy     \n\n\n\nName      Status\n----      ------\nBits     Running\nwuauserv Running\n\n\n"
+                     "Raw":  "\nDriveLetter FriendlyName FreeGB SizeGB\n----------- ------------ ------ ------\n          C              372.81 474.72\n                           0.98   1.95\n\n\n\nFriendlyName                  MediaType         Size HealthStatus\n------------                  ---------         ---- ------------\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 Healthy     \n\n\n\nName      Status\n----      ------\nBits     Running\nwuauserv Running\n\n\n"
                  },
         "Type":  "Function"
     }
