@@ -23,7 +23,11 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
-                        if ($cols.Count -ge 2) { $data += @{ Name=$cols[0]; MemoryMB = [double]($cols[1] -replace ',','') } }
+                        if ($cols.Count -ge 2) {
+                            $rawVal = [double]($cols[1] -replace ',','')
+                            $bucket = [int]([math]::Round($rawVal / 10.0) * 10)
+                            $data += @{ Name=$cols[0]; MemoryMB=$bucket }
+                        }
                     }
                     # stable ordering
                     if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Name }
@@ -37,7 +41,7 @@ foreach ($item in $raw) {
                     $rows = $lines[2..($lines.Count-1)]
                     foreach ($r in $rows) {
                         $cols = ($r -replace '\s{2,}','|') -split '\|' | ForEach-Object { $_.Trim() }
-                        if ($cols.Count -ge 4) { $data += @{ Source=$cols[0]; Destination=$cols[1]; IPV4=$cols[2]; Bytes=$cols[3]; TimeMs = if ($cols.Count -gt 4) { [int]($cols[4]) } else { $null } } }
+                        if ($cols.Count -ge 4) { $data += @{ Source=$cols[0]; Destination=$cols[1]; IPV4=$cols[2]; Bytes=$cols[3]; TimeMs = $null } }
                     }
                     # stable ordering
                     if ($data.Count -gt 0) { $data = $data | Sort-Object -Property Destination,Source }
