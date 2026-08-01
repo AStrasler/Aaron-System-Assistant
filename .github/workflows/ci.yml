@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, 'fix/*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  windows-tests:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run import tests
+        shell: powershell
+        run: |
+          Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\test_imports.ps1
+
+      - name: Run parse checks
+        shell: powershell
+        run: |
+          Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\parse_all.ps1
+
+      - name: Run PSScriptAnalyzer
+        shell: powershell
+        run: |
+          Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\run_analyzer.ps1
+
+      - name: Deep tests (non-interactive)
+        shell: powershell
+        run: |
+          Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\run_deep_tests.ps1
+
+      - name: Upload analyzer results
+        uses: actions/upload-artifact@v4
+        with:
+          name: analyzer_results
+          path: tools/analyzer_results.json
+
+      - name: Upload deep test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: deep_test_results
+          path: tools/deep_test_results.json
