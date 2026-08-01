@@ -1,0 +1,205 @@
+﻿[
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Battery.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Cleanup.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Config.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Memory.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Network.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Reports.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Startup.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Storage.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Updates.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\Utilities.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Module":  "C:\\Users\\aaron_lc3zh3u\\Documents\\GitHub\\Aaron-System-Utility\\WindowsRepair.psm1",
+        "Imported":  true,
+        "Error":  null,
+        "Type":  "Module"
+    },
+    {
+        "Function":  "Show-BatteryMenu",
+        "Data":  {
+                     "ReportPath":  "C:\\Users\\aaron_lc3zh3u\\AppData\\Local\\Temp\\battery-report.html"
+                 },
+        "Type":  "Function"
+    },
+    {
+        "Function":  "Show-CleanupMenu",
+        "Data":  {
+                     "Raw":  ""
+                 },
+        "Type":  "Function"
+    },
+    {
+        "Function":  "Show-MemoryMenu",
+        "Data":  [
+                     {
+                         "Name":  "Code",
+                         "MemoryMB":  417.45
+                     },
+                     {
+                         "Name":  "svchost",
+                         "MemoryMB":  345.21
+                     },
+                     {
+                         "Name":  "MsMpEng",
+                         "MemoryMB":  207.21
+                     },
+                     {
+                         "Name":  "PhoneExperienceHost",
+                         "MemoryMB":  168.21
+                     },
+                     {
+                         "Name":  "Code",
+                         "MemoryMB":  148.4
+                     }
+                 ],
+        "Type":  "Function"
+    },
+    {
+        "Function":  "Show-NetworkMenu",
+        "Data":  [
+                     {
+                         "Destination":  "8.8.8.8",
+                         "TimeMs":  11,
+                         "Source":  "AARON",
+                         "IPV4":  "8.8.8.8",
+                         "Bytes":  "32"
+                     },
+                     {
+                         "Destination":  "8.8.8.8",
+                         "TimeMs":  7,
+                         "Source":  "AARON",
+                         "IPV4":  "8.8.8.8",
+                         "Bytes":  "32"
+                     },
+                     {
+                         "Destination":  "8.8.8.8",
+                         "TimeMs":  8,
+                         "Source":  "AARON",
+                         "IPV4":  "8.8.8.8",
+                         "Bytes":  "32"
+                     },
+                     {
+                         "Destination":  "8.8.8.8",
+                         "TimeMs":  10,
+                         "Source":  "AARON",
+                         "IPV4":  "8.8.8.8",
+                         "Bytes":  "32"
+                     }
+                 ],
+        "Type":  "Function"
+    },
+    {
+        "Function":  "Show-StorageMenu",
+        "Data":  [
+                     {
+                         "Health":  "",
+                         "Size":  "Healthy",
+                         "MediaType":  "512110190592 NVMe",
+                         "FriendlyName":  "WD PC SN740 SDDPMQD-512G-1101 SSD"
+                     }
+                 ],
+        "Type":  "Function"
+    },
+    {
+        "Function":  "Show-UpdatesMenu",
+        "Data":  {
+                     "Raw":  ""
+                 },
+        "Type":  "Function"
+    },
+    {
+        "Function":  "Show-StartupMenu",
+        "Data":  [
+                     {
+                         "Command":  "\"C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe\" /background",
+                         "Name":  "OneDrive"
+                     },
+                     {
+                         "Command":  "C:\\Users\\aaron_lc3zh3u\\AppData\\Roaming\\Spotify\\Spotify.exe --a...",
+                         "Name":  "Spotify"
+                     },
+                     {
+                         "Command":  "\"C:\\Users\\aaron_lc3zh3u\\AppData\\Local\\Microsoft\\WindowsApps\\MS...",
+                         "Name":  "Teams"
+                     },
+                     {
+                         "Command":  "\"C:\\Program Files\\NordVPN\\NordVPN.exe\" --auto-start",
+                         "Name":  "NordVPN"
+                     },
+                     {
+                         "Command":  "%windir%\\system32\\SecurityHealthSystray.exe",
+                         "Name":  "SecurityHealth"
+                     },
+                     {
+                         "Command":  "\"C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\realtekservice...",
+                         "Name":  "RtkAudUService"
+                     }
+                 ],
+        "Type":  "Function"
+    },
+    {
+        "Function":  "Show-ReportsMenu",
+        "Data":  {
+                     "Raw":  ""
+                 },
+        "Type":  "Function"
+    },
+    {
+        "Function":  "Show-WindowsRepairMenu",
+        "Data":  {
+                     "Raw":  "\nDriveLetter FriendlyName FreeGB SizeGB\n----------- ------------ ------ ------\n          C              373.42 474.72\n                           0.98   1.95\n\n\n\nFriendlyName                  MediaType         Size HealthStatus\n------------                  ---------         ---- ------------\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 Healthy     \n\n\n\nName      Status\n----      ------\nBits     Running\nwuauserv Running\n\n\n"
+                 },
+        "Type":  "Function"
+    }
+]

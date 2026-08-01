@@ -37,17 +37,25 @@ jobs:
           Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
           powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\run_deep_tests.ps1
 
-      - name: Compare deep test output to golden
+      - name: Normalize deep test results
         shell: powershell
         run: |
           Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\compare_deep_test_golden.ps1
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\normalize_deep_test_results.ps1
 
-      - name: Upload deep test golden diff (if any)
+      - name: Strict compare normalized deep test output to golden
+        shell: powershell
+        run: |
+          Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\compare_deep_test_strict.ps1
+
+      - name: Upload normalized artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: deep_test_golden_diff
-          path: tools/deep_test_golden_diff.txt
+          name: deep_test_normalized
+          path: |
+            tools/deep_test_results_normalized.json
+            tools/deep_test_normalized_diff.txt
 
       - name: Upload analyzer results
         uses: actions/upload-artifact@v4

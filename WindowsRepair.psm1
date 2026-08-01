@@ -69,3 +69,53 @@ function Show-WindowsRepairMenu {
 
 Export-ModuleMember -Function Show-WindowsRepairMenu
 
+function Test-IsAdmin {
+    $id = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $p = New-Object System.Security.Principal.WindowsPrincipal($id)
+    return $p.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+function Repair-WindowsSfc {
+    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
+    param(
+        [switch]$Force
+    )
+    if ($PSBoundParameters.ContainsKey('WhatIf')) { return }
+    if (-not (Test-IsAdmin)) {
+        Write-Host "Repair-WindowsSfc requires administrative privileges. Run PowerShell as Administrator." -ForegroundColor Yellow
+        return
+    }
+    if ($PSCmdlet.ShouldProcess('sfc /scannow','Run System File Checker')) {
+        if (-not $Force) {
+            $ok = Read-Host "Proceed with sfc /scannow? Type 'yes' to continue"
+            if ($ok -ne 'yes') { Write-Host 'Cancelled.'; return }
+        }
+        Write-Host 'Running sfc /scannow (this may take several minutes)...' -ForegroundColor Cyan
+        Start-Process -FilePath sfc.exe -ArgumentList '/scannow' -Wait
+        Write-ASULog 'sfc /scannow completed' -Level 'Info'
+    }
+}
+
+function Repair-WindowsDism {
+    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
+    param(
+        [switch]$Force
+    )
+    if ($PSBoundParameters.ContainsKey('WhatIf')) { return }
+    if (-not (Test-IsAdmin)) {
+        Write-Host "Repair-WindowsDism requires administrative privileges. Run PowerShell as Administrator." -ForegroundColor Yellow
+        return
+    }
+    if ($PSCmdlet.ShouldProcess('DISM /Online /Cleanup-Image /RestoreHealth','Run DISM restorehealth')) {
+        if (-not $Force) {
+            $ok = Read-Host "Proceed with DISM /Online /Cleanup-Image /RestoreHealth? Type 'yes' to continue"
+            if ($ok -ne 'yes') { Write-Host 'Cancelled.'; return }
+        }
+        Write-Host 'Running DISM restorehealth (this may take several minutes)...' -ForegroundColor Cyan
+        Start-Process -FilePath dism.exe -ArgumentList '/Online','/Cleanup-Image','/RestoreHealth' -Wait
+        Write-ASULog 'DISM RestoreHealth completed' -Level 'Info'
+    }
+}
+
+Export-ModuleMember -Function Repair-WindowsSfc,Repair-WindowsDism
+
