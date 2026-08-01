@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 
 <#
 .SYNOPSIS
@@ -7,6 +7,8 @@
     Central hub for system utilities including battery, cleanup, memory, network, storage, updates, and Windows repair
 #>
 
+# PSScriptAnalyzerSuppressMessage -RuleName PSAvoidUsingWriteHost -Justification 'Interactive console output intentional for menu UI'
+# PSScriptAnalyzerSuppressMessage -RuleName PSAvoidGlobalVars -Justification 'Global config is intentionally provided to modules by ASU.ps1 for interactive utility context'
 # Get the script directory
 $ScriptPath = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
@@ -16,7 +18,7 @@ if (Test-Path $ConfigPath) {
     try {
         $Global:ASUConfig = Get-Content $ConfigPath -Raw | ConvertFrom-Json
     } catch {
-        Write-Host "Warning: Failed to parse config.json: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Warning "Failed to parse config.json: $($_.Exception.Message)"
     }
 }
 
@@ -52,14 +54,8 @@ function Write-ASULog {
     $msgLevel = if ($levelPriority.ContainsKey($Level)) { $levelPriority[$Level] } else { 1 }
     if ($msgLevel -lt $current) { return }
 
-    # Simple console output
-    $Color = switch ($Level) {
-        "Error" { "Red" }
-        "Warning" { "Yellow" }
-        "Info" { "Green" }
-        default { "White" }
-    }
-    Write-Host "[$Timestamp] [$Level] $Message" -ForegroundColor $Color
+    # Simple console output (no color to remain analyzer-friendly)
+    Write-Output "[$Timestamp] [$Level] $Message"
 }
 
 # Main Menu Function
@@ -81,99 +77,99 @@ function Show-MainMenu {
     Write-Host "9. Generate Reports" -ForegroundColor Green
     Write-Host "0. Exit" -ForegroundColor Red
     Write-Host ""
-    
+
     $choice = Read-Host "Enter your choice (0-9)"
-    
+
     switch ($choice) {
-        '1' { 
-            if (Get-Command Show-BatteryMenu -ErrorAction SilentlyContinue) { 
-                Show-BatteryMenu 
-            } else { 
+        '1' {
+            if (Get-Command Show-BatteryMenu -ErrorAction SilentlyContinue) {
+                Show-BatteryMenu
+            } else {
                 Write-Host "Battery module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '2' { 
-            if (Get-Command Show-CleanupMenu -ErrorAction SilentlyContinue) { 
-                Show-CleanupMenu 
-            } else { 
+        '2' {
+            if (Get-Command Show-CleanupMenu -ErrorAction SilentlyContinue) {
+                Show-CleanupMenu
+            } else {
                 Write-Host "Cleanup module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '3' { 
-            if (Get-Command Show-MemoryMenu -ErrorAction SilentlyContinue) { 
-                Show-MemoryMenu 
-            } else { 
+        '3' {
+            if (Get-Command Show-MemoryMenu -ErrorAction SilentlyContinue) {
+                Show-MemoryMenu
+            } else {
                 Write-Host "Memory module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '4' { 
-            if (Get-Command Show-NetworkMenu -ErrorAction SilentlyContinue) { 
-                Show-NetworkMenu 
-            } else { 
+        '4' {
+            if (Get-Command Show-NetworkMenu -ErrorAction SilentlyContinue) {
+                Show-NetworkMenu
+            } else {
                 Write-Host "Network module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '5' { 
-            if (Get-Command Show-StorageMenu -ErrorAction SilentlyContinue) { 
-                Show-StorageMenu 
-            } else { 
+        '5' {
+            if (Get-Command Show-StorageMenu -ErrorAction SilentlyContinue) {
+                Show-StorageMenu
+            } else {
                 Write-Host "Storage module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '6' { 
-            if (Get-Command Show-UpdatesMenu -ErrorAction SilentlyContinue) { 
-                Show-UpdatesMenu 
-            } else { 
+        '6' {
+            if (Get-Command Show-UpdatesMenu -ErrorAction SilentlyContinue) {
+                Show-UpdatesMenu
+            } else {
                 Write-Host "Updates module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '7' { 
-            if (Get-Command Show-StartupMenu -ErrorAction SilentlyContinue) { 
-                Show-StartupMenu 
-            } else { 
+        '7' {
+            if (Get-Command Show-StartupMenu -ErrorAction SilentlyContinue) {
+                Show-StartupMenu
+            } else {
                 Write-Host "Startup module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '8' { 
-            if (Get-Command Show-WindowsRepairMenu -ErrorAction SilentlyContinue) { 
-                Show-WindowsRepairMenu 
-            } else { 
+        '8' {
+            if (Get-Command Show-WindowsRepairMenu -ErrorAction SilentlyContinue) {
+                Show-WindowsRepairMenu
+            } else {
                 Write-Host "Windows Repair module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '9' { 
-            if (Get-Command Show-ReportsMenu -ErrorAction SilentlyContinue) { 
-                Show-ReportsMenu 
-            } else { 
+        '9' {
+            if (Get-Command Show-ReportsMenu -ErrorAction SilentlyContinue) {
+                Show-ReportsMenu
+            } else {
                 Write-Host "Reports module not loaded" -ForegroundColor Red
                 Pause
-                Show-MainMenu 
-            } 
+                Show-MainMenu
+            }
         }
-        '0' { 
+        '0' {
             Write-Host "Exiting ASU. Goodbye!" -ForegroundColor Yellow
-            exit 
+            exit
         }
-        default { 
+        default {
             Write-Host "Invalid choice. Please try again." -ForegroundColor Red
             Pause
-            Show-MainMenu 
+            Show-MainMenu
         }
     }
 }
