@@ -58,7 +58,7 @@
         "Function":  "Show-BatteryMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  "Battery life report saved to file path C:\\Users\\aaron_lc3zh3u\\AppData\\Local\\Temp\\battery-report.html.\r\n"
+        "Output":  "Battery life report saved to file path C:\\Users\\aaron_lc3zh3u\\AppData\\Local\\Temp\\battery-report.html.\\r\\n"
     },
     {
         "Function":  "Show-CleanupMenu",
@@ -70,19 +70,19 @@
         "Function":  "Show-MemoryMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  "\r\nName                Memory (MB)\r\n----                -----------\r\nCode                     555.29\r\nCode                      348.7\r\nMsMpEng                  188.24\r\nPhoneExperienceHost      159.79\r\npowershell                92.17\r\n\r\n\r\n"
+        "Output":  "\\r\\nName                Memory (MB)\\r\\n----                -----------\\r\\nsvchost                  531.66\\r\\nCode                     404.42\\r\\nMsMpEng                  156.64\\r\\nPhoneExperienceHost      142.64\\r\\npowershell                 85.7\\r\\n\\r\\n\\r\\n"
     },
     {
         "Function":  "Show-NetworkMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  "\r\nSource        Destination     IPV4Address      IPV6Address                              Bytes\r\n------        -----------     -----------      -----------                              -----\r\nAARON         8.8.8.8         8.8.8.8                                                   32   \r\nAARON         8.8.8.8         8.8.8.8                                                   32   \r\nAARON         8.8.8.8         8.8.8.8                                                   32   \r\nAARON         8.8.8.8         8.8.8.8                                                   32   \r\n\r\n\r\n"
+        "Output":  "\\r\\nSource        Destination     IPV4Address      IPV6Address                              Bytes    Time(ms) \\\\r\\\\n------        -----------     -----------      -----------                              -----    -------- \\\\r\\\\nAARON         8.8.8.8         8.8.4.4                                                   32       9        \\\\r\\\\nAARON         8.8.8.8         8.8.4.4                                                   32       19       \\\\r\\\\nAARON         8.8.8.8         8.8.4.4                                                   32       8        \\\\r\\\\nAARON         8.8.8.8         8.8.4.4                                                   32       22       \\\\r\\\\n\\r\\n\\r\\n"
     },
     {
         "Function":  "Show-StorageMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  "\r\nFriendlyName                  MediaType         Size BusType HealthStatus\r\n------------                  ---------         ---- ------- ------------\r\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 NVMe    Healthy     \r\n\r\n\r\n"
+        "Output":  "\\r\\nFriendlyName                  MediaType         Size BusType HealthStatus\\r\\n------------                  ---------         ---- ------- ------------\\r\\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 NVMe    Healthy     \\\\r\\\\n\\r\\n\\r\\n"
     },
     {
         "Function":  "Show-UpdatesMenu",
@@ -94,7 +94,7 @@
         "Function":  "Show-StartupMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  "\r\nName                                                    Command                              \r\n----                                                    -------                              \r\nOneDrive                                                \"C:\\Program Files\\Microsoft OneDri...\r\nGoogleChromeAutoLaunch_21684C9FD5A9AFF086317A1C3A6D825F \"C:\\Program Files\\Google\\Chrome\\Ap...\r\nSpotify                                                 C:\\Users\\aaron_lc3zh3u\\AppData\\Roa...\r\nTeams                                                   \"C:\\Users\\aaron_lc3zh3u\\AppData\\Lo...\r\nNordVPN                                                 \"C:\\Program Files\\NordVPN\\NordVPN....\r\nSecurityHealth                                          %windir%\\system32\\SecurityHealthSy...\r\nRtkAudUService                                          \"C:\\WINDOWS\\System32\\DriverStore\\F...\r\n\r\n\r\n"
+        "Output":  "\\r\\nName                                                    Command                                                          \\\\r\\\\n----                                                    -------                                                          \\\\r\\\\nOneDrive                                                \"C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe\" /background   \\\\r\\\\nGoogleChromeAutoLaunch_21684C9FD5A9AFF086317A1C3A6D825F \"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --no-s...\\r\\nSpotify                                                 C:\\Users\\aaron_lc3zh3u\\AppData\\Roaming\\Spotify\\Spotify.exe --a...\\r\\nTeams                                                   \"C:\\Users\\aaron_lc3zh3u\\AppData\\Local\\Microsoft\\WindowsApps\\MS...\\r\\nNordVPN                                                 \"C:\\Program Files\\NordVPN\\NordVPN.exe\" --auto-start              \\\\r\\\\nSecurityHealth                                          %windir%\\system32\\SecurityHealthSystray.exe                      \\\\r\\\\nRtkAudUService                                          \"C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\realtekservice...\\r\\n\\r\\n\\r\\n"
     },
     {
         "Function":  "Show-ReportsMenu",
