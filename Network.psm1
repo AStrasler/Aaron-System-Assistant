@@ -16,6 +16,10 @@
 .NOTES
     Intended for interactive use within ASU.
 #>
+<#
+.SYNOPSIS
+    Show-NetworkMenu (auto-added help)
+#>
 function Show-NetworkMenu {
     Clear-Host
     Write-Host "=== Network Diagnostics ===" -ForegroundColor Cyan
@@ -43,4 +47,6 @@ function Show-NetworkMenu {
 }
 
 Export-ModuleMember -Function Show-NetworkMenu
+
+
 

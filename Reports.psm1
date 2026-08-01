@@ -13,6 +13,10 @@
 .EXAMPLE
     Show-ReportsMenu
 #>
+<#
+.SYNOPSIS
+    Show-ReportsMenu (auto-added help)
+#>
 function Show-ReportsMenu {
     Clear-Host
     $ReportPath = Get-ASUReportPath
@@ -37,4 +41,6 @@ function Show-ReportsMenu {
 }
 
 Export-ModuleMember -Function Show-ReportsMenu
+
+
 

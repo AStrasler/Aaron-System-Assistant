@@ -1,4 +1,4 @@
-# Runs non-interactive smoke tests for all module menu functions
+﻿# Runs non-interactive smoke tests for all module menu functions
 # Overrides interactive helpers (Pause, Read-Host, Show-MainMenu) to keep tests non-blocking
 
 $ErrorActionPreference = 'Continue'
@@ -59,3 +59,4 @@ foreach ($fn in $menuFunctions) {
 
 $results | ConvertTo-Json -Depth 6 | Out-File (Join-Path $scriptRoot 'deep_test_results.json') -Encoding UTF8
 Write-Output 'DEEP_TEST_DONE'
+

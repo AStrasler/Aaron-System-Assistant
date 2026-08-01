@@ -13,6 +13,10 @@
 .EXAMPLE
     Show-MemoryMenu
 #>
+<#
+.SYNOPSIS
+    Show-MemoryMenu (auto-added help)
+#>
 function Show-MemoryMenu {
     Clear-Host
     Write-Host "=== Memory Analysis ===" -ForegroundColor Cyan
@@ -35,4 +39,6 @@ function Show-MemoryMenu {
 }
 
 Export-ModuleMember -Function Show-MemoryMenu
+
+
 

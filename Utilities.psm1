@@ -8,6 +8,10 @@
     behavior and surfaces available utilities to the user.
 #>
 
+<#
+.SYNOPSIS
+    Show-UtilitiesMenu (auto-added help)
+#>
 function Show-UtilitiesMenu {
     Clear-Host
     Write-Host "=== Utilities ===" -ForegroundColor Cyan
@@ -24,4 +28,6 @@ function Show-UtilitiesMenu {
 }
 
 Export-ModuleMember -Function Show-UtilitiesMenu
+
+
 

@@ -18,3 +18,4 @@ Get-ChildItem -Path $root -Include *.ps1,*.psm1 -Recurse -File | ForEach-Object 
 if ($script:fail) { exit 2 } else { Write-Output 'ALL_PARSE_OK' }
 
 
+

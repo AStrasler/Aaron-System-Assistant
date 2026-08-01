@@ -13,6 +13,10 @@
 .EXAMPLE
     Show-BatteryMenu
 #>
+<#
+.SYNOPSIS
+    Show-BatteryMenu (auto-added help)
+#>
 function Show-BatteryMenu {
     Clear-Host
     Write-Host "=== Battery Analysis ===" -ForegroundColor Cyan
@@ -34,4 +38,6 @@ function Show-BatteryMenu {
 }
 
 Export-ModuleMember -Function Show-BatteryMenu
+
+
 

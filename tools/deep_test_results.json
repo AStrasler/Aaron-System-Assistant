@@ -70,13 +70,13 @@
         "Function":  "Show-MemoryMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  "\r\nName                Memory (MB)\r\n----                -----------\r\nCode                     555.29\r\nCode                      348.7\r\nMsMpEng                  188.24\r\nPhoneExperienceHost      159.79\r\npowershell                92.17\r\n\r\n\r\n"
+        "Output":  "\r\nName                Memory (MB)\r\n----                -----------\r\nCode                     407.43\r\nMsMpEng                  206.53\r\nPhoneExperienceHost      169.18\r\nCode                     126.97\r\nGitHubDesktop            102.66\r\n\r\n\r\n"
     },
     {
         "Function":  "Show-NetworkMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  "\r\nSource        Destination     IPV4Address      IPV6Address                              Bytes\r\n------        -----------     -----------      -----------                              -----\r\nAARON         8.8.8.8         8.8.8.8                                                   32   \r\nAARON         8.8.8.8         8.8.8.8                                                   32   \r\nAARON         8.8.8.8         8.8.8.8                                                   32   \r\nAARON         8.8.8.8         8.8.8.8                                                   32   \r\n\r\n\r\n"
+        "Output":  "\r\nSource        Destination     IPV4Address      IPV6Address                              Bytes    Time(ms) \r\n------        -----------     -----------      -----------                              -----    -------- \r\nAARON         8.8.8.8         8.8.8.8                                                   32       10       \r\nAARON         8.8.8.8         8.8.8.8                                                   32       11       \r\nAARON         8.8.8.8         8.8.8.8                                                   32       12       \r\nAARON         8.8.8.8         8.8.8.8                                                   32       10       \r\n\r\n\r\n"
     },
     {
         "Function":  "Show-StorageMenu",
@@ -94,7 +94,7 @@
         "Function":  "Show-StartupMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  "\r\nName                                                    Command                              \r\n----                                                    -------                              \r\nOneDrive                                                \"C:\\Program Files\\Microsoft OneDri...\r\nGoogleChromeAutoLaunch_21684C9FD5A9AFF086317A1C3A6D825F \"C:\\Program Files\\Google\\Chrome\\Ap...\r\nSpotify                                                 C:\\Users\\aaron_lc3zh3u\\AppData\\Roa...\r\nTeams                                                   \"C:\\Users\\aaron_lc3zh3u\\AppData\\Lo...\r\nNordVPN                                                 \"C:\\Program Files\\NordVPN\\NordVPN....\r\nSecurityHealth                                          %windir%\\system32\\SecurityHealthSy...\r\nRtkAudUService                                          \"C:\\WINDOWS\\System32\\DriverStore\\F...\r\n\r\n\r\n"
+        "Output":  "\r\nName                                                    Command                                                          \r\n----                                                    -------                                                          \r\nOneDrive                                                \"C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe\" /background   \r\nGoogleChromeAutoLaunch_21684C9FD5A9AFF086317A1C3A6D825F \"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --no-s...\r\nSpotify                                                 C:\\Users\\aaron_lc3zh3u\\AppData\\Roaming\\Spotify\\Spotify.exe --a...\r\nTeams                                                   \"C:\\Users\\aaron_lc3zh3u\\AppData\\Local\\Microsoft\\WindowsApps\\MS...\r\nNordVPN                                                 \"C:\\Program Files\\NordVPN\\NordVPN.exe\" --auto-start              \r\nSecurityHealth                                          %windir%\\system32\\SecurityHealthSystray.exe                      \r\nRtkAudUService                                          \"C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\realtekservice...\r\n\r\n\r\n"
     },
     {
         "Function":  "Show-ReportsMenu",
@@ -106,6 +106,6 @@
         "Function":  "Show-WindowsRepairMenu",
         "Ran":  true,
         "Error":  null,
-        "Output":  ""
+        "Output":  "\r\nDriveLetter FriendlyName FreeGB SizeGB\r\n----------- ------------ ------ ------\r\n          C              375.08 474.72\r\n                           0.98   1.95\r\n\r\n\r\n\r\nFriendlyName                  MediaType         Size HealthStatus\r\n------------                  ---------         ---- ------------\r\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 Healthy     \r\n\r\n\r\n\r\nName      Status\r\n----      ------\r\nBits     Running\r\nwuauserv Running\r\n\r\n\r\n"
     }
 ]

@@ -84,23 +84,23 @@
         "Data":  [
                      {
                          "Name":  "Code",
-                         "MemoryMB":  417.45
+                         "MemoryMB":  130
                      },
                      {
-                         "Name":  "svchost",
-                         "MemoryMB":  345.21
-                     },
-                     {
-                         "Name":  "MsMpEng",
-                         "MemoryMB":  207.21
+                         "Name":  "GitHubDesktop",
+                         "MemoryMB":  100
                      },
                      {
                          "Name":  "PhoneExperienceHost",
-                         "MemoryMB":  168.21
+                         "MemoryMB":  170
                      },
                      {
                          "Name":  "Code",
-                         "MemoryMB":  148.4
+                         "MemoryMB":  410
+                     },
+                     {
+                         "Name":  "MsMpEng",
+                         "MemoryMB":  210
                      }
                  ],
         "Type":  "Function"
@@ -110,28 +110,28 @@
         "Data":  [
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  11,
+                         "TimeMs":  null,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
                      },
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  7,
+                         "TimeMs":  null,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
                      },
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  8,
+                         "TimeMs":  null,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
                      },
                      {
                          "Destination":  "8.8.8.8",
-                         "TimeMs":  10,
+                         "TimeMs":  null,
                          "Source":  "AARON",
                          "IPV4":  "8.8.8.8",
                          "Bytes":  "32"
@@ -141,14 +141,12 @@
     },
     {
         "Function":  "Show-StorageMenu",
-        "Data":  [
-                     {
-                         "Health":  "",
-                         "Size":  "Healthy",
-                         "MediaType":  "512110190592 NVMe",
-                         "FriendlyName":  "WD PC SN740 SDDPMQD-512G-1101 SSD"
-                     }
-                 ],
+        "Data":  {
+                     "Health":  "",
+                     "Size":  "Healthy",
+                     "MediaType":  "512110190592 NVMe",
+                     "FriendlyName":  "WD PC SN740 SDDPMQD-512G-1101 SSD"
+                 },
         "Type":  "Function"
     },
     {
@@ -162,18 +160,6 @@
         "Function":  "Show-StartupMenu",
         "Data":  [
                      {
-                         "Command":  "\"C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe\" /background",
-                         "Name":  "OneDrive"
-                     },
-                     {
-                         "Command":  "C:\\Users\\aaron_lc3zh3u\\AppData\\Roaming\\Spotify\\Spotify.exe --a...",
-                         "Name":  "Spotify"
-                     },
-                     {
-                         "Command":  "\"C:\\Users\\aaron_lc3zh3u\\AppData\\Local\\Microsoft\\WindowsApps\\MS...",
-                         "Name":  "Teams"
-                     },
-                     {
                          "Command":  "\"C:\\Program Files\\NordVPN\\NordVPN.exe\" --auto-start",
                          "Name":  "NordVPN"
                      },
@@ -184,6 +170,18 @@
                      {
                          "Command":  "\"C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\realtekservice...",
                          "Name":  "RtkAudUService"
+                     },
+                     {
+                         "Command":  "\"C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe\" /background",
+                         "Name":  "OneDrive"
+                     },
+                     {
+                         "Command":  "C:\\Users\\aaron_lc3zh3u\\AppData\\Roaming\\Spotify\\Spotify.exe --a...",
+                         "Name":  "Spotify"
+                     },
+                     {
+                         "Command":  "\"C:\\Users\\aaron_lc3zh3u\\AppData\\Local\\Microsoft\\WindowsApps\\MS...",
+                         "Name":  "Teams"
                      }
                  ],
         "Type":  "Function"
@@ -198,7 +196,7 @@
     {
         "Function":  "Show-WindowsRepairMenu",
         "Data":  {
-                     "Raw":  "\nDriveLetter FriendlyName FreeGB SizeGB\n----------- ------------ ------ ------\n          C              373.42 474.72\n                           0.98   1.95\n\n\n\nFriendlyName                  MediaType         Size HealthStatus\n------------                  ---------         ---- ------------\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 Healthy     \n\n\n\nName      Status\n----      ------\nBits     Running\nwuauserv Running\n\n\n"
+                     "Raw":  "\nDriveLetter FriendlyName FreeGB SizeGB\n----------- ------------ ------ ------\n          C              375.08 474.72\n                           0.98   1.95\n\n\n\nFriendlyName                  MediaType         Size HealthStatus\n------------                  ---------         ---- ------------\nWD PC SN740 SDDPMQD-512G-1101 SSD       512110190592 Healthy     \n\n\n\nName      Status\n----      ------\nBits     Running\nwuauserv Running\n\n\n"
                  },
         "Type":  "Function"
     }

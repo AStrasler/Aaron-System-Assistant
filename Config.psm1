@@ -34,6 +34,10 @@ function Get-ASUConfig {
 .DESCRIPTION
     Returns the configured report path (from config.json) joined with the provided base path, or a default 'Reports' directory.
 #>
+<#
+.SYNOPSIS
+    Get-ASUReportPath (auto-added help)
+#>
 function Get-ASUReportPath {
     param(
         [string]$RelativeTo = $PSScriptRoot
@@ -53,4 +57,6 @@ function Get-ASULoggingLevel {
 }
 
 Export-ModuleMember -Function Get-ASUConfig, Get-ASUReportPath, Get-ASULoggingLevel
+
+
 

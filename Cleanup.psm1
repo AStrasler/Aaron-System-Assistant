@@ -14,6 +14,10 @@
 .EXAMPLE
 	Show-CleanupMenu
 #>
+<#
+.SYNOPSIS
+    Show-CleanupMenu (auto-added help)
+#>
 function Show-CleanupMenu {
 	Clear-Host
 	Write-Host "=== System Cleanup ===" -ForegroundColor Cyan
@@ -47,4 +51,6 @@ function Show-CleanupMenu {
 }
 
 Export-ModuleMember -Function Show-CleanupMenu
+
+
 

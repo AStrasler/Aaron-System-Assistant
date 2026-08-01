@@ -11,6 +11,10 @@
 .EXAMPLE
     Show-WindowsRepairMenu
 #>
+<#
+.SYNOPSIS
+    Show-WindowsRepairMenu (auto-added help)
+#>
 function Show-WindowsRepairMenu {
     Clear-Host
     Write-Host "=== Windows Repair: Diagnostics ===" -ForegroundColor Cyan
@@ -118,4 +122,6 @@ function Repair-WindowsDism {
 }
 
 Export-ModuleMember -Function Repair-WindowsSfc,Repair-WindowsDism
+
+
 

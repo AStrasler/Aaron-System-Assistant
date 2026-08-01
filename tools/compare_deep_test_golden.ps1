@@ -1,4 +1,4 @@
-<#
+﻿<#
 Tolerant comparator for `tools/deep_test_results.json`.
 Checks presence of expected headers/markers instead of exact formatting so
 environment-specific columns (timings, path lengths) don't cause failures.
@@ -57,3 +57,4 @@ if ($failures.Count -gt 0) {
 
 Write-Output "Deep test checks passed (tolerant comparison)."
 exit 0
+

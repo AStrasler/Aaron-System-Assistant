@@ -1,4 +1,4 @@
-$actualPath = Join-Path $PSScriptRoot '..\tools\deep_test_results.json'
+﻿$actualPath = Join-Path $PSScriptRoot '..\tools\deep_test_results.json'
 $goldenPath = Join-Path $PSScriptRoot '..\tools\golden\deep_test_expected.json'
 $a = Get-Content -LiteralPath $actualPath -Raw | ConvertFrom-Json
 $g = Get-Content -LiteralPath $goldenPath -Raw | ConvertFrom-Json
