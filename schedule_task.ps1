@@ -23,10 +23,10 @@ $action = "powershell -NoProfile -ExecutionPolicy Bypass -File `"$MaintenanceScr
 Write-Output "Registering scheduled task '$TaskName' to run daily at $Time"
 
 # Use schtasks for broad compatibility without requiring explicit Task Scheduler modules
-$cmd = "schtasks /Create /TN $TaskName /TR `"$action`" /SC DAILY /ST $Time /RL HIGHEST /F"
+$arguments = @('/Create', '/TN', $TaskName, '/TR', $action, '/SC', 'DAILY', '/ST', $Time, '/RL', 'HIGHEST', '/F')
 
 try {
-    Invoke-Expression $cmd
+    & schtasks.exe @arguments
     Write-Output "Scheduled task created/updated. Check Task Scheduler for details." 
 } catch {
     Write-Error "Failed to create scheduled task: $($_.Exception.Message)"
