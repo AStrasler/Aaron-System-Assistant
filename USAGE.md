@@ -30,6 +30,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\schedule_task.ps1
 ```
 
 Notes:
+
 - `ASU.ps1` is the interactive launcher and requires elevation due to `#Requires -RunAsAdministrator`.
 - `ASU_maintenance.ps1` is designed to run without elevation for typical user-level cleanup and report generation.
 - Check the `Reports/` folder for generated HTML reports and the `ASU_Maintenance.log` when `-LogToFile` is used.
