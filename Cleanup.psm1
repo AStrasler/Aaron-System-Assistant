@@ -50,7 +50,30 @@ function Show-CleanupMenu {
 	Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-CleanupMenu
+function Invoke-Cleanup {
+	[CmdletBinding(SupportsShouldProcess=$true)]
+	param(
+		[switch]$DryRun
+	)
+	$target = "$env:TEMP\*"
+	if ($PSCmdlet.ShouldProcess($target, 'Remove temp files')) {
+		if ($DryRun) {
+			Remove-Item -Path $target -Recurse -Force -ErrorAction SilentlyContinue -WhatIf
+			return @{ Status = 'DryRun'; Target = $target }
+		} else {
+			try {
+				Remove-Item -Path $target -Recurse -Force -ErrorAction SilentlyContinue
+				return @{ Status = 'OK'; Target = $target }
+			} catch {
+				return @{ Status = 'Error'; Message = $_.Exception.Message }
+			}
+		}
+	} else {
+		return @{ Status = 'Skipped' }
+	}
+}
+
+Export-ModuleMember -Function Show-CleanupMenu,Invoke-Cleanup
 
 
 

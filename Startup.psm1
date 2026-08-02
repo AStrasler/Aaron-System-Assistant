@@ -23,7 +23,13 @@ function Show-StartupMenu {
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-StartupMenu
+function Get-StartupItems {
+    param()
+    $items = Get-CimInstance Win32_StartupCommand | Select-Object Name, Command, Location
+    return $items
+}
+
+Export-ModuleMember -Function Show-StartupMenu,Get-StartupItems
 
 
 

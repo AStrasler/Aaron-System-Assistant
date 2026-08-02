@@ -71,8 +71,6 @@ function Show-WindowsRepairMenu {
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-WindowsRepairMenu
-
 function Test-IsAdmin {
     $id = [System.Security.Principal.WindowsIdentity]::GetCurrent()
     $p = New-Object System.Security.Principal.WindowsPrincipal($id)
@@ -121,7 +119,18 @@ function Repair-WindowsDism {
     }
 }
 
-Export-ModuleMember -Function Repair-WindowsSfc,Repair-WindowsDism
+function Get-WindowsDiagnostics {
+    param()
+    try {
+        $os = Get-CimInstance Win32_OperatingSystem -ErrorAction Stop | Select-Object Caption, Version, BuildNumber, LastBootUpTime
+    } catch { $os = $null }
+    try { $volumes = Get-Volume -ErrorAction Stop | Select-Object DriveLetter, FriendlyName, @{Name='FreeGB';Expression={[math]::Round($_.SizeRemaining/1GB,2)}}, @{Name='SizeGB';Expression={[math]::Round($_.Size/1GB,2)}} } catch { $volumes = $null }
+    try { $services = Get-Service -Name wuauserv,Bits -ErrorAction Stop | Select-Object Name, Status } catch { $services = $null }
+    try { $disks = Get-PhysicalDisk -ErrorAction SilentlyContinue | Select-Object FriendlyName, MediaType, Size, HealthStatus } catch { $disks = $null }
+    return @{ OS = $os; Volumes = $volumes; Services = $services; Disks = $disks }
+}
+
+Export-ModuleMember -Function Show-WindowsRepairMenu,Test-IsAdmin,Repair-WindowsSfc,Repair-WindowsDism,Get-WindowsDiagnostics
 
 
 

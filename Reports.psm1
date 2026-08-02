@@ -40,7 +40,27 @@ function Show-ReportsMenu {
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-ReportsMenu
+function New-ASUReport {
+    param(
+        [string]$OutputPath
+    )
+    $rp = if ($OutputPath) { Split-Path -Parent $OutputPath } else { Get-ASUReportPath -RelativeTo $PSScriptRoot }
+    if (-not (Test-Path $rp)) { New-Item -Path $rp -ItemType Directory -Force | Out-Null }
+    $ReportFile = if ($OutputPath) { $OutputPath } else { Join-Path $rp "ASU_Report_$(Get-Date -Format 'yyyyMMdd_HHmmss').html" }
+
+    @"
+<html><head><title>ASU System Report</title></head><body>
+<h1>Aaron System Utility Report</h1>
+<p>Generated: $(Get-Date)</p>
+<h2>System Info</h2>
+<pre>$(Get-ComputerInfo | Out-String)</pre>
+</body></html>
+"@ | Out-File $ReportFile -Encoding UTF8
+
+    return $ReportFile
+}
+
+Export-ModuleMember -Function Show-ReportsMenu,New-ASUReport
 
 
 

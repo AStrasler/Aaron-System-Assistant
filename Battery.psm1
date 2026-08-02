@@ -37,7 +37,17 @@ function Show-BatteryMenu {
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-BatteryMenu
+function Invoke-BatteryReport {
+    param(
+        [string]$OutputPath
+    )
+    $out = if ($OutputPath) { $OutputPath } else { Join-Path $env:TEMP 'battery-report.html' }
+    powercfg /batteryreport /output "$out"
+    $battery = Get-CimInstance -ClassName Win32_Battery -ErrorAction SilentlyContinue
+    return @{ Report = $out; Battery = $battery }
+}
+
+Export-ModuleMember -Function Show-BatteryMenu,Invoke-BatteryReport
 
 
 

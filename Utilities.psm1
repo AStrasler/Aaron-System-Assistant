@@ -27,7 +27,17 @@ function Show-UtilitiesMenu {
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-UtilitiesMenu
+function Get-UtilitiesList {
+    param()
+    $toolsPath = Join-Path -Path $PSScriptRoot -ChildPath '..\tools'
+    if (Test-Path $toolsPath) {
+        return Get-ChildItem -Path $toolsPath -Filter '*.ps1' -File | Select-Object Name, Length
+    } else {
+        return @()
+    }
+}
+
+Export-ModuleMember -Function Show-UtilitiesMenu,Get-UtilitiesList
 
 
 

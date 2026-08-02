@@ -46,7 +46,20 @@ function Show-NetworkMenu {
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-NetworkMenu
+function Get-NetworkDiagnostics {
+    param(
+        [string]$PingTarget
+    )
+    $cfg = Get-ASUConfig
+    $target = if ($PingTarget) { $PingTarget } elseif ($cfg -and $cfg.PingTarget) { $cfg.PingTarget } else { '8.8.8.8' }
+    $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceIndex -ne 1 } | Select-Object -First 1).IPAddress
+    $gateway = (Get-NetIPConfiguration | Select-Object -ExpandProperty IPv4DefaultGateway | Select-Object -ExpandProperty NextHop)
+    try { $public = Invoke-RestMethod -Uri 'https://api.ipify.org' -Method Get -ErrorAction Stop } catch { $public = $null }
+    $ping = Test-Connection -ComputerName $target -Count 4 -ErrorAction SilentlyContinue
+    return @{ LocalIP = $ip; Gateway = $gateway; PublicIP = $public; PingTarget = $target; PingResult = $ping }
+}
+
+Export-ModuleMember -Function Show-NetworkMenu,Get-NetworkDiagnostics
 
 
 

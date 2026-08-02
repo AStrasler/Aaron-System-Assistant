@@ -30,7 +30,16 @@ function Show-StorageMenu {
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-StorageMenu
+function Get-StorageSummary {
+    param()
+    $disks = Get-PhysicalDisk -ErrorAction SilentlyContinue | Select-Object FriendlyName, MediaType, Size, BusType, HealthStatus
+    $drives = Get-PSDrive -PSProvider FileSystem | ForEach-Object {
+        [PSCustomObject]@{ Name = $_.Name; UsedGB = [math]::Round($_.Used/1GB,2); FreeGB = [math]::Round($_.Free/1GB,2) }
+    }
+    return @{ Disks = $disks; Drives = $drives }
+}
+
+Export-ModuleMember -Function Show-StorageMenu,Get-StorageSummary
 
 
 

@@ -38,7 +38,15 @@ function Show-MemoryMenu {
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-MemoryMenu
+function Get-MemorySummary {
+    param()
+    $ComputerSystem = Get-CimInstance Win32_ComputerSystem
+    $OS = Get-CimInstance Win32_OperatingSystem
+    $top = Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5 | Select-Object Name,@{Name='MemoryMB';Expression={[math]::Round($_.WorkingSet/1MB,2)}}
+    return @{ InstalledGB = [math]::Round($ComputerSystem.TotalPhysicalMemory / 1GB, 2); UsableGB = [math]::Round($OS.TotalVisibleMemorySize / 1MB, 2); TopConsumers = $top }
+}
+
+Export-ModuleMember -Function Show-MemoryMenu,Get-MemorySummary
 
 
 
