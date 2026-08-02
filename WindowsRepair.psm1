@@ -82,15 +82,14 @@ function Repair-WindowsSfc {
     param(
         [switch]$Force
     )
-    if ($PSBoundParameters.ContainsKey('WhatIf')) { return }
     if (-not (Test-IsAdmin)) {
         Write-Host "Repair-WindowsSfc requires administrative privileges. Run PowerShell as Administrator." -ForegroundColor Yellow
         return
     }
     if ($PSCmdlet.ShouldProcess('sfc /scannow','Run System File Checker')) {
         if (-not $Force) {
-            $ok = Read-Host "Proceed with sfc /scannow? Type 'yes' to continue"
-            if ($ok -ne 'yes') { Write-Host 'Cancelled.'; return }
+            $confirm = $PSCmdlet.ShouldContinue('Run sfc /scannow now?', 'Confirm System File Checker')
+            if (-not $confirm) { Write-Host 'Cancelled.'; return }
         }
         Write-Host 'Running sfc /scannow (this may take several minutes)...' -ForegroundColor Cyan
         Start-Process -FilePath sfc.exe -ArgumentList '/scannow' -Wait
@@ -103,15 +102,14 @@ function Repair-WindowsDism {
     param(
         [switch]$Force
     )
-    if ($PSBoundParameters.ContainsKey('WhatIf')) { return }
     if (-not (Test-IsAdmin)) {
         Write-Host "Repair-WindowsDism requires administrative privileges. Run PowerShell as Administrator." -ForegroundColor Yellow
         return
     }
     if ($PSCmdlet.ShouldProcess('DISM /Online /Cleanup-Image /RestoreHealth','Run DISM restorehealth')) {
         if (-not $Force) {
-            $ok = Read-Host "Proceed with DISM /Online /Cleanup-Image /RestoreHealth? Type 'yes' to continue"
-            if ($ok -ne 'yes') { Write-Host 'Cancelled.'; return }
+            $confirm = $PSCmdlet.ShouldContinue('Run DISM /Online /Cleanup-Image /RestoreHealth now?', 'Confirm DISM RestoreHealth')
+            if (-not $confirm) { Write-Host 'Cancelled.'; return }
         }
         Write-Host 'Running DISM restorehealth (this may take several minutes)...' -ForegroundColor Cyan
         Start-Process -FilePath dism.exe -ArgumentList '/Online','/Cleanup-Image','/RestoreHealth' -Wait
