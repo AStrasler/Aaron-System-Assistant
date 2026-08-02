@@ -1,43 +1,65 @@
 ﻿<#
 .SYNOPSIS
-    Hardware diagnostics module for ASU
+    Windows update status module for ASU
 #>
 
 <#
 .SYNOPSIS
-    Show hardware diagnostics and basic system information.
+    Show installed and available Windows update information.
 
 .DESCRIPTION
-    Displays manufacturer, model, BIOS version, CPU and GPU information.
+    Queries the Windows Update agent for available non-hidden updates and displays a concise summary.
 
 .EXAMPLE
     Show-UpdatesMenu
 #>
+function Get-UpdateSummary {
+    param()
+
+    try {
+        $Session = New-Object -ComObject Microsoft.Update.Session
+        $Searcher = $Session.CreateUpdateSearcher()
+        $SearchResult = $Searcher.Search("IsInstalled=0 and IsHidden=0")
+
+        $Updates = @($SearchResult.Updates | ForEach-Object {
+            [PSCustomObject]@{
+                Title = $_.Title
+                KBArticleIDs = ($_.KBArticleIDs -join ', ')
+                RebootRequired = [bool]$_.RebootRequired
+            }
+        })
+
+        return @{ Found = $Updates.Count; Updates = $Updates }
+    } catch {
+        return @{ Error = $_.Exception.Message; Found = 0; Updates = @() }
+    }
+}
+
 function Show-UpdatesMenu {
     Clear-Host
-    Write-Host "=== Hardware Diagnostics ===" -ForegroundColor Cyan
+    Write-Host "=== Windows Updates ===" -ForegroundColor Cyan
 
-    # Get system info
-    $ComputerSystem = Get-CimInstance Win32_ComputerSystem
-    $BIOS = Get-CimInstance Win32_BIOS
-    $CPU = Get-CimInstance Win32_Processor | Select-Object -First 1
-    $GPU = Get-CimInstance Win32_VideoController | Where-Object { $_.Name -notlike "*Microsoft*" } | Select-Object -First 1
-
-    Write-Host "Manufacturer: $($ComputerSystem.Manufacturer)" -ForegroundColor White
-    Write-Host "Model: $($ComputerSystem.Model)" -ForegroundColor White
-    Write-Host "Motherboard: $( (Get-CimInstance Win32_BaseBoard).Product )" -ForegroundColor White
-    Write-Host "BIOS Version: $($BIOS.Version)" -ForegroundColor White
-    Write-Host "CPU: $($CPU.Name) ($($CPU.NumberOfCores) cores)" -ForegroundColor White
-    if ($GPU) {
-        Write-Host "GPU: $($GPU.Name)" -ForegroundColor White
+    $Summary = Get-UpdateSummary
+    if ($Summary.Error) {
+        Write-Host "Unable to query Windows Update: $($Summary.Error)" -ForegroundColor Red
+    } else {
+        Write-Host "Available updates: $($Summary.Found)" -ForegroundColor White
+        if ($Summary.Found -gt 0) {
+            $Summary.Updates | Select-Object -First 10 Title, KBArticleIDs, RebootRequired | Format-Table -AutoSize
+            if ($Summary.Found -gt 10) {
+                Write-Host "Showing first 10 of $($Summary.Found) available updates." -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "No available non-hidden updates were found." -ForegroundColor Green
+        }
     }
 
-    Write-ASULog "Hardware diagnostics viewed" -Level "Info"
+    Write-ASULog "Windows update status viewed" -Level "Info"
     Pause
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-UpdatesMenu
+Export-ModuleMember -Function Show-UpdatesMenu,Get-UpdateSummary
 
 
 

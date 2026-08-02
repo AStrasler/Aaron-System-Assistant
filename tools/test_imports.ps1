@@ -1,4 +1,4 @@
-﻿$root = "c:\Users\aaron_lc3zh3u\Documents\GitHub\Aaron-System-Utility"
+﻿$root = Split-Path -Parent $PSScriptRoot
 Get-ChildItem -Path $root -Filter *.psm1 -File | ForEach-Object {
     $path = $_.FullName
     Write-Output "Importing: $path"

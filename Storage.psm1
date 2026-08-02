@@ -21,8 +21,11 @@ function Show-StorageMenu {
 
     $Drives = Get-PSDrive -PSProvider FileSystem
     foreach ($Drive in $Drives) {
-        $FreePercent = [math]::Round(($Drive.Free / $Drive.Used) * 100, 1)  # Note: simplistic
-        Write-Host "$($Drive.Name): $($Drive.Used/1GB) GB used, $($Drive.Free/1GB) GB free ($FreePercent% free)" -ForegroundColor $(if ($Drive.Free/1GB -lt 10) {"Red"} else {"Green"})
+        $TotalBytes = [double]$Drive.Used + [double]$Drive.Free
+        $FreePercent = if ($TotalBytes -gt 0) { [math]::Round(([double]$Drive.Free / $TotalBytes) * 100, 1) } else { 0 }
+        $FreeGB = [math]::Round([double]$Drive.Free / 1GB, 2)
+        $UsedGB = [math]::Round([double]$Drive.Used / 1GB, 2)
+        Write-Host "$($Drive.Name): $UsedGB GB used, $FreeGB GB free ($FreePercent% free)" -ForegroundColor $(if ($FreeGB -lt 10) {"Red"} else {"Green"})
     }
 
     Write-ASULog "Storage diagnostics viewed" -Level "Info"

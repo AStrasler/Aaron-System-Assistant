@@ -20,6 +20,7 @@ Import-Module "$ScriptPath\Battery.psm1" -Force
 Import-Module "$ScriptPath\Memory.psm1" -Force
 Import-Module "$ScriptPath\Network.psm1" -Force
 Import-Module "$ScriptPath\Storage.psm1" -Force
+Import-Module "$ScriptPath\Updates.psm1" -Force
 Import-Module "$ScriptPath\Startup.psm1" -Force
 Import-Module "$ScriptPath\Utilities.psm1" -Force
 Import-Module "$ScriptPath\WindowsRepair.psm1" -Force
@@ -59,6 +60,9 @@ try { $results['Network'] = Get-NetworkDiagnostics } catch { $results['Network']
 
 Write-ShortLog "Collecting storage summary" 'Info'
 try { $results['Storage'] = Get-StorageSummary } catch { $results['Storage'] = @{ Error = $_.Exception.Message } }
+
+Write-ShortLog "Collecting update summary" 'Info'
+try { $results['Updates'] = Get-UpdateSummary } catch { $results['Updates'] = @{ Error = $_.Exception.Message } }
 
 Write-ShortLog "Collecting startup items" 'Info'
 try { $results['Startup'] = Get-StartupItems } catch { $results['Startup'] = @{ Error = $_.Exception.Message } }

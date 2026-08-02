@@ -1,4 +1,4 @@
-﻿$root = "c:\Users\aaron_lc3zh3u\Documents\GitHub\Aaron-System-Utility"
+﻿$root = Split-Path -Parent $PSScriptRoot
 # PSScriptAnalyzerSuppressMessage -RuleName PSUseDeclaredVarsMoreThanAssignments -Justification 'Variable $fail is used after the loop to determine exit code'
 $script:fail = $false
 Get-ChildItem -Path $root -Include *.ps1,*.psm1 -Recurse -File | ForEach-Object {

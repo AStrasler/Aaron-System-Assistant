@@ -2,7 +2,7 @@
 
 Summary
 
-This PR aligns module exports with their containing module files, adds non-interactive helpers for scheduled maintenance, and provides a maintenance runner, scheduler helper, and usage docs.
+This PR aligns module exports with their containing module files, adds non-interactive helpers for scheduled maintenance, and provides a maintenance runner, scheduler helper, and usage docs. It also restores the Windows Updates menu to a real update status view, fixes storage percentage math, and makes the tooling path-relative.
 
 Key changes
 
@@ -10,6 +10,7 @@ Key changes
 - Added `schedule_task.ps1` — helper to register a daily scheduled task.
 - Added `USAGE.md` — instructions for manual and scheduled runs.
 - Added `tools/check_syntax.ps1` and ran syntax checks.
+- Added `config.json` as the runtime configuration source and removed the stale `settings.json` content.
 - Refactored modules to expose non-interactive functions:
   - `Cleanup.psm1`: `Invoke-Cleanup`
   - `Battery.psm1`: `Invoke-BatteryReport`
@@ -20,21 +21,26 @@ Key changes
   - `Utilities.psm1`: `Get-UtilitiesList`
   - `Reports.psm1`: `New-ASUReport`
   - `WindowsRepair.psm1`: `Get-WindowsDiagnostics` (exports consolidated)
+  - `Updates.psm1`: `Get-UpdateSummary`
 
 Fixes applied
 
 - Resolved a parameter name conflict in `Invoke-Cleanup` (renamed to `-DryRun`).
 - Replaced an invalid `[ordered]::new()` usage with a standard hashtable in `ASU_maintenance.ps1`.
 - Consolidated duplicate `Export-ModuleMember` entries in `WindowsRepair.psm1`.
+- Fixed the storage free-space percentage calculation.
+- Replaced the mismatched Updates screen with a Windows Update status summary.
+- Made test scripts and utilities resolve paths from the repository layout instead of a hard-coded clone path.
 
 Testing performed
 
 - Ran `tools/check_syntax.ps1` — no parse errors.
-- Executed `ASU_maintenance.ps1 -DryRun -LogToFile` — completed successfully, created an HTML report under `Reports/` and wrote `ASU_Maintenance.log` when `-LogToFile` used.
+- Executed the repository validation scripts: `tools/check_parse.ps1`, `tools/test_imports.ps1`, and `tools/parse_all.ps1` — all completed successfully.
+- Verified the docs and launcher no longer claim the interactive menu requires elevation.
 
 Notes & next steps
 
-- Interactive launcher `ASU.ps1` still requires elevation (`#Requires -RunAsAdministrator`) — non-interactive runner is designed to run without elevation.
+- Interactive launcher `ASU.ps1` does not require elevation for menu navigation; repair actions still need Administrator rights.
 - Consider adding a centralized logging helper module to unify `Write-ASULog` and `Write-ShortLog` behavior.
 - Recommend a live test of a non-dry run on a test machine and review generated reports.
 

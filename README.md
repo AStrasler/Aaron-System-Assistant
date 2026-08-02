@@ -8,20 +8,20 @@ A professional, modular Windows maintenance and diagnostics utility written in *
 
 ## ✨ Features
 
-- **Hardware Diagnostics** — CPU, GPU, BIOS, motherboard
 - **Memory Analysis** — Usage, top processes, pressure
 - **Storage Health** — SMART, TRIM, free space
 - **Startup Management** — List & categorize
 - **Network Diagnostics** — IP, DNS, connectivity tests
 - **Battery Analysis** — Health report
 - **Windows Repair** — SFC, DISM, CHKDSK
-- **Cleanup & Updates**
+- **Cleanup Utilities** — safe-by-default cleanup with dry-run support
+- **Windows Updates** — available update summary
 - **HTML Reports** + Logging
 
 ## 🚀 Quick Start
 
 1. Download the latest release or clone the repo.
-2. Extract and run `ASU.bat`. If you plan to use repair features (SFC/DISM/CHKDSK), run the launcher with Administrator rights (Right-click → Run as administrator).
+2. Extract and run `ASU.bat`. The launcher does not auto-elevate; use Administrator rights only when you plan to run repair features such as SFC, DISM, or CHKDSK.
 3. Use the menu-driven interface.
 
 ## Testing and Validation
@@ -68,7 +68,7 @@ Aaron-System-Utility/
 
 - Windows 10 / 11
 - PowerShell 5.1 (pre-installed)
-- Administrator rights for repairs
+- Administrator rights for repair actions such as SFC, DISM, and CHKDSK
 
 ## Configuration
 
@@ -85,7 +85,7 @@ Aaron-System-Utility/
 ## Safety and Usability
 
 - Cleanup operations now prompt for confirmation and support a dry-run option (select `D` at the prompt) so you can preview destructive actions.
-- The launcher and README clearly indicate Administrator rights are required for repair operations; use the provided `launcher.bat` or create an elevated shortcut.
+- The launcher does not auto-elevate. Use `launcher.bat` for a normal shell, and reopen it as Administrator only when you need repair operations.
 
 ## License
 

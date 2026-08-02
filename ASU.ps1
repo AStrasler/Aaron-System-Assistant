@@ -69,7 +69,7 @@ function Show-MainMenu {
     Write-Host "3. Memory Management" -ForegroundColor Green
     Write-Host "4. Network Tools" -ForegroundColor Green
     Write-Host "5. Storage Management" -ForegroundColor Green
-    Write-Host "6. Updates" -ForegroundColor Green
+    Write-Host "6. Windows Updates" -ForegroundColor Green
     Write-Host "7. Startup Applications" -ForegroundColor Green
     Write-Host "8. Windows Repair" -ForegroundColor Green
     Write-Host "9. Generate Reports" -ForegroundColor Green

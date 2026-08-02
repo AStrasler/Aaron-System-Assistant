@@ -15,7 +15,7 @@
 function Show-UtilitiesMenu {
     Clear-Host
     Write-Host "=== Utilities ===" -ForegroundColor Cyan
-    $toolsPath = Join-Path -Path $PSScriptRoot -ChildPath '..\tools'
+    $toolsPath = Join-Path -Path $PSScriptRoot -ChildPath 'tools'
     if (Test-Path $toolsPath) {
         Write-Host "Available helper scripts in tools/:" -ForegroundColor Yellow
         Get-ChildItem -Path $toolsPath -Filter '*.ps1' -File | Select-Object Name, Length | Format-Table -AutoSize
@@ -29,7 +29,7 @@ function Show-UtilitiesMenu {
 
 function Get-UtilitiesList {
     param()
-    $toolsPath = Join-Path -Path $PSScriptRoot -ChildPath '..\tools'
+    $toolsPath = Join-Path -Path $PSScriptRoot -ChildPath 'tools'
     if (Test-Path $toolsPath) {
         return Get-ChildItem -Path $toolsPath -Filter '*.ps1' -File | Select-Object Name, Length
     } else {
