@@ -1,6 +1,4 @@
-﻿#Requires -RunAsAdministrator
-
-<#
+﻿<#
 .SYNOPSIS
     Aaron System Utility (ASU) - Main launcher script
 .DESCRIPTION
