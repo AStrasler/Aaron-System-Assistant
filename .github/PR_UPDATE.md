@@ -1,4 +1,4 @@
-PR Summary (ready for copy into PR description)
+# PR Summary (ready for copy into PR description)
 
 Summary
 

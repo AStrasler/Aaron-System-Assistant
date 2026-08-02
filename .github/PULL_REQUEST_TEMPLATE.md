@@ -1,4 +1,6 @@
-## Summary
+# Pull Request Summary
+
+## *Summary*
 
 This PR aligns module files with exported functions, refactors configuration into a small accessor module (`Config.psm1`), and improves usability and safety (dry-run for cleanup, config-driven ping target, report path handling).
 
