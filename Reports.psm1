@@ -37,7 +37,6 @@ function Show-ReportsMenu {
 <body>
   <h1>Aaron System Utility Report</h1>
   <p>Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')</p>
-
   <h2>System</h2>
   <table>
     <tr><th>Computer Name</th><td>$($cs.Name)</td></tr>
@@ -46,7 +45,6 @@ function Show-ReportsMenu {
     <tr><th>OS</th><td>$($os.Caption) (Build $($os.BuildNumber))</td></tr>
     <tr><th>Install Date</th><td>$($os.InstallDate)</td></tr>
   </table>
-
   <h2>Hardware</h2>
   <table>
     <tr><th>CPU</th><td>$($cpu.Name)</td></tr>
@@ -54,7 +52,6 @@ function Show-ReportsMenu {
     <tr><th>Total RAM</th><td>$([math]::Round($cs.TotalPhysicalMemory/1GB,2)) GB</td></tr>
     <tr><th>BIOS</th><td>$($bios.SMBIOSBIOSVersion)</td></tr>
   </table>
-
   <h2>Memory Snapshot</h2>
   <table>
     <tr><th>Free Physical</th><td>$([math]::Round($os.FreePhysicalMemory/1MB,2)) GB</td></tr>
@@ -67,6 +64,10 @@ function Show-ReportsMenu {
     $html | Out-File -FilePath $ReportFile -Encoding UTF8
     Write-Host "Report saved: $ReportFile" -ForegroundColor Green
     Write-ASULog "Report generated: $ReportFile" -Level Info
+
+    $open = Read-Host 'Open report now? (Y/N)'
+    if ($open -match '^[Yy]') { Start-Process $ReportFile }
+
     Pause
 }
 

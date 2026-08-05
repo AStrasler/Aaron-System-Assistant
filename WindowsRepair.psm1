@@ -13,9 +13,13 @@ function Show-WindowsRepairMenu {
     Write-Host ''
 
     if (-not (Test-AdminRights)) {
-        Write-Host 'Administrator rights required for repair actions.' -ForegroundColor Red
-        Pause
-        return
+        $continue = Request-Elevation
+        if (-not $continue) { return }
+        if (-not (Test-AdminRights)) {
+            Write-Host 'Administrator rights still required. Aborting.' -ForegroundColor Red
+            Pause
+            return
+        }
     }
 
     $choice = Read-Host 'Enter choice'
@@ -23,27 +27,25 @@ function Show-WindowsRepairMenu {
         '1' {
             $confirm = Read-Host 'SFC can take 10-30+ minutes. Continue? (Y/N)'
             if ($confirm -match '^[Yy]') {
-                Write-Host 'Running SFC...' -ForegroundColor Yellow
+                Write-Host 'Running SFC... do not close this window.' -ForegroundColor Yellow
                 sfc /scannow
                 Write-ASULog 'SFC scan completed' -Level Info
             }
         }
         '2' {
-            $confirm = Read-Host 'DISM RestoreHealth can take a long time and needs internet. Continue? (Y/N)'
+            $confirm = Read-Host 'DISM can take a long time and needs internet. Continue? (Y/N)'
             if ($confirm -match '^[Yy]') {
-                Write-Host 'Running DISM...' -ForegroundColor Yellow
+                Write-Host 'Running DISM... do not close this window.' -ForegroundColor Yellow
                 DISM /Online /Cleanup-Image /RestoreHealth
                 Write-ASULog 'DISM RestoreHealth completed' -Level Info
             }
         }
         '3' {
-            Write-Host 'This will schedule CHKDSK /f on C: for the next reboot.' -ForegroundColor Yellow
+            Write-Host 'This schedules CHKDSK /f on C: for the next reboot.' -ForegroundColor Yellow
             $confirm = Read-Host 'Type YES to confirm'
             if ($confirm -eq 'YES') {
-                # Safer approach: just schedule, do not force interactive pipe
-                chkntfs /c C: 2>$null
-                Write-Host 'Attempting to schedule CHKDSK. You may still see a prompt.' -ForegroundColor Yellow
-                Write-Host 'Alternatively run: chkdsk C: /f   from an elevated prompt and accept the schedule.' -ForegroundColor Gray
+                Write-Host 'Run the following from an elevated prompt if needed:' -ForegroundColor Gray
+                Write-Host '  chkdsk C: /f' -ForegroundColor Gray
                 Write-ASULog 'CHKDSK schedule requested' -Level Info
             }
         }

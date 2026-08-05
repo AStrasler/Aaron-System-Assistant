@@ -1,3 +1,4 @@
 @echo off
-SET SCRIPT_DIR=%~dp0
-powershell -NoProfile -NoExit -ExecutionPolicy Bypass -File "%SCRIPT_DIR%ASU.ps1"
+title Aaron System Utility
+cd /d "%~dp0"
+powershell -NoProfile -NoExit -ExecutionPolicy Bypass -File "%~dp0ASU.ps1"

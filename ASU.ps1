@@ -4,24 +4,28 @@
 .SYNOPSIS
     Aaron System Utility (ASU) - Main launcher
 .NOTES
-    Version is read from the VERSION file
+    Portable. Version read from VERSION file.
+    Modules auto-discovered. LoggingLevel respected.
 #>
 
 $script:ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $global:ScriptPath = $script:ScriptPath
+Set-Location -Path $script:ScriptPath -ErrorAction SilentlyContinue
 
-# Read version
+# Version
 $versionFile = Join-Path $script:ScriptPath 'VERSION'
-$script:ASUVersion = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { '1.0.1' }
+$script:ASUVersion = if (Test-Path $versionFile) {
+    (Get-Content $versionFile -Raw).Trim()
+} else { '1.0.1' }
 
-# Load settings
+# Settings
 $settingsPath = Join-Path $script:ScriptPath 'settings.json'
 if (Test-Path $settingsPath) {
     $script:Config = Get-Content $settingsPath -Raw | ConvertFrom-Json
 } else {
     $script:Config = [pscustomobject]@{
-        LoggingLevel = 'Info'
-        ReportPath   = 'Reports'
+        LoggingLevel     = 'Info'
+        ReportPath       = 'Reports'
         HealthThresholds = [pscustomobject]@{
             MemoryWarning  = 80
             StorageWarning = 20
@@ -30,28 +34,16 @@ if (Test-Path $settingsPath) {
     }
 }
 
-# Import modules
-$moduleFiles = @(
-    'Utilities.psm1', 'Battery.psm1', 'Cleanup.psm1', 'Memory.psm1',
-    'Network.psm1', 'Storage.psm1', 'Startup.psm1', 'Updates.psm1',
-    'WindowsRepair.psm1', 'Reports.psm1'
-)
-
-foreach ($mod in $moduleFiles) {
-    $modPath = Join-Path $script:ScriptPath $mod
-    if (Test-Path $modPath) {
-        try { Import-Module $modPath -Force -ErrorAction Stop }
-        catch { Write-Host "Failed to import $mod : $_" -ForegroundColor Red }
-    }
-}
-
-[Console]::Title = "Aaron System Utility v$($script:ASUVersion)"
-
 function Write-ASULog {
     param(
         [Parameter(Mandatory)][string]$Message,
         [ValidateSet('Info','Warning','Error','Debug')][string]$Level = 'Info'
     )
+    $levelOrder = @{ Debug = 0; Info = 1; Warning = 2; Error = 3 }
+    $configLevel = $script:Config.LoggingLevel
+    if (-not $levelOrder.ContainsKey($configLevel)) { $configLevel = 'Info' }
+    if ($levelOrder[$Level] -lt $levelOrder[$configLevel]) { return }
+
     $ts = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
     $color = switch ($Level) {
         'Error'   { 'Red' }
@@ -73,6 +65,70 @@ function Pause {
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
 
+# Load Utilities first
+$utilitiesPath = Join-Path $script:ScriptPath 'Utilities.psm1'
+if (Test-Path $utilitiesPath) {
+    Import-Module $utilitiesPath -Force -ErrorAction SilentlyContinue
+}
+
+# Auto-discover remaining modules
+$script:MenuItems = [System.Collections.Generic.List[object]]::new()
+
+Get-ChildItem -Path $script:ScriptPath -Filter '*.psm1' -File |
+    Where-Object { $_.Name -ne 'Utilities.psm1' } |
+    ForEach-Object {
+        try {
+            Import-Module $_.FullName -Force -ErrorAction Stop
+            Write-ASULog "Loaded module: $($_.BaseName)" -Level Debug
+        } catch {
+            Write-ASULog "Failed to load $($_.Name): $_" -Level Error
+        }
+    }
+
+# Friendly names for known menus
+$menuMap = [ordered]@{
+    'Show-BatteryMenu'       = 'Battery Management'
+    'Show-CleanupMenu'       = 'Cleanup Utilities'
+    'Show-MemoryMenu'        = 'Memory Management'
+    'Show-NetworkMenu'       = 'Network Tools'
+    'Show-StorageMenu'       = 'Storage Management'
+    'Show-UpdatesMenu'       = 'Updates'
+    'Show-StartupMenu'       = 'Startup Applications'
+    'Show-WindowsRepairMenu' = 'Windows Repair'
+    'Show-ReportsMenu'       = 'Generate Reports'
+}
+
+$index = 1
+foreach ($cmdName in $menuMap.Keys) {
+    if (Get-Command $cmdName -ErrorAction SilentlyContinue) {
+        $script:MenuItems.Add([pscustomobject]@{
+            Index   = $index
+            Name    = $menuMap[$cmdName]
+            Command = $cmdName
+        })
+        $index++
+    }
+}
+
+[Console]::Title = "Aaron System Utility v$($script:ASUVersion)"
+
+function Show-About {
+    Clear-Host
+    Write-Host '========================================' -ForegroundColor Cyan
+    Write-Host "   Aaron System Utility v$($script:ASUVersion)" -ForegroundColor Cyan
+    Write-Host '========================================' -ForegroundColor Cyan
+    Write-Host ''
+    Write-Host "Path      : $script:ScriptPath"
+    Write-Host "Admin     : $(if (Test-AdminRights) {'Yes'} else {'No'})"
+    Write-Host "Log Level : $($script:Config.LoggingLevel)"
+    Write-Host "Modules   : $($script:MenuItems.Count) loaded"
+    Write-Host ''
+    Write-Host 'Portable modular Windows maintenance tool.'
+    Write-Host 'Destructive actions ask for confirmation.'
+    Write-Host ''
+    Pause
+}
+
 function Show-MainMenu {
     Clear-Host
     Write-Host '========================================' -ForegroundColor Cyan
@@ -80,51 +136,48 @@ function Show-MainMenu {
     Write-Host '========================================' -ForegroundColor Cyan
     Write-Host ''
 
-    $isAdmin = Test-AdminRights
-    if (-not $isAdmin) {
+    if (-not (Test-AdminRights)) {
         Write-Host 'Running without Administrator privileges.' -ForegroundColor Yellow
-        Write-Host 'Some repair and cleanup actions will be blocked.' -ForegroundColor Yellow
+        Write-Host 'Repair / Cleanup will offer to elevate.' -ForegroundColor Yellow
         Write-Host ''
     }
 
-    Write-Host '1. Battery Management'     -ForegroundColor Green
-    Write-Host '2. Cleanup Utilities'      -ForegroundColor Green
-    Write-Host '3. Memory Management'      -ForegroundColor Green
-    Write-Host '4. Network Tools'          -ForegroundColor Green
-    Write-Host '5. Storage Management'     -ForegroundColor Green
-    Write-Host '6. Updates'                -ForegroundColor Green
-    Write-Host '7. Startup Applications'   -ForegroundColor Green
-    Write-Host '8. Windows Repair'         -ForegroundColor Green
-    Write-Host '9. Generate Reports'       -ForegroundColor Green
-    Write-Host '0. Exit'                   -ForegroundColor Red
+    foreach ($item in $script:MenuItems) {
+        Write-Host ("{0}. {1}" -f $item.Index, $item.Name) -ForegroundColor Green
+    }
+    Write-Host 'A. About / Help' -ForegroundColor Cyan
+    Write-Host '0. Exit' -ForegroundColor Red
     Write-Host ''
 }
 
-# Main loop — no recursion
 Write-ASULog "ASU v$($script:ASUVersion) starting" -Level Info
 
 do {
     Show-MainMenu
-    $choice = Read-Host 'Enter your choice (0-9)'
+    $choice = Read-Host 'Enter your choice'
 
-    switch ($choice) {
-        '1' { if (Get-Command Show-BatteryMenu -EA SilentlyContinue) { Show-BatteryMenu } else { Write-Host 'Battery module missing' -ForegroundColor Red; Pause } }
-        '2' { if (Get-Command Show-CleanupMenu -EA SilentlyContinue) { Show-CleanupMenu } else { Write-Host 'Cleanup module missing' -ForegroundColor Red; Pause } }
-        '3' { if (Get-Command Show-MemoryMenu -EA SilentlyContinue) { Show-MemoryMenu } else { Write-Host 'Memory module missing' -ForegroundColor Red; Pause } }
-        '4' { if (Get-Command Show-NetworkMenu -EA SilentlyContinue) { Show-NetworkMenu } else { Write-Host 'Network module missing' -ForegroundColor Red; Pause } }
-        '5' { if (Get-Command Show-StorageMenu -EA SilentlyContinue) { Show-StorageMenu } else { Write-Host 'Storage module missing' -ForegroundColor Red; Pause } }
-        '6' { if (Get-Command Show-UpdatesMenu -EA SilentlyContinue) { Show-UpdatesMenu } else { Write-Host 'Updates module missing' -ForegroundColor Red; Pause } }
-        '7' { if (Get-Command Show-StartupMenu -EA SilentlyContinue) { Show-StartupMenu } else { Write-Host 'Startup module missing' -ForegroundColor Red; Pause } }
-        '8' { if (Get-Command Show-WindowsRepairMenu -EA SilentlyContinue) { Show-WindowsRepairMenu } else { Write-Host 'Windows Repair module missing' -ForegroundColor Red; Pause } }
-        '9' { if (Get-Command Show-ReportsMenu -EA SilentlyContinue) { Show-ReportsMenu } else { Write-Host 'Reports module missing' -ForegroundColor Red; Pause } }
-        '0' {
-            Write-Host 'Exiting ASU. Goodbye!' -ForegroundColor Yellow
-            Write-ASULog 'ASU exited by user' -Level Info
-            exit 0
-        }
-        default {
-            Write-Host 'Invalid choice.' -ForegroundColor Red
-            Start-Sleep -Seconds 1
-        }
+    if ($choice -eq '0') {
+        Write-Host 'Exiting ASU. Goodbye!' -ForegroundColor Yellow
+        Write-ASULog 'ASU exited by user' -Level Info
+        exit 0
+    }
+    if ($choice -match '^[Aa]$') {
+        Show-About
+        continue
+    }
+
+    $selected = $script:MenuItems | Where-Object { $_.Index -eq [int]$choice } | Select-Object -First 1
+    if (-not $selected) {
+        Write-Host 'Invalid choice.' -ForegroundColor Red
+        Start-Sleep -Seconds 1
+        continue
+    }
+
+    try {
+        & $selected.Command
+    } catch {
+        Write-Host "Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor Red
+        Write-ASULog "Error in $($selected.Command): $_" -Level Error
+        Pause
     }
 } while ($true)

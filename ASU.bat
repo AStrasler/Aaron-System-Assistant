@@ -1,9 +1,13 @@
 @echo off
 title Aaron System Utility
-color 0A
+cd /d "%~dp0"
 
-echo Starting Aaron System Utility...
+where powershell >nul 2>&1
+if %errorlevel% neq 0 (
+    echo PowerShell not found. Windows 10/11 required.
+    pause
+    exit /b 1
+)
 
-powershell.exe -ExecutionPolicy Bypass -NoProfile -File "%~dp0ASU.ps1"
-
-pause
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+  "Start-Process powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File \"%~dp0ASU.ps1\"' -Verb RunAs"

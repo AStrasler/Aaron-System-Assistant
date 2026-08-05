@@ -6,13 +6,14 @@
 function Show-CleanupMenu {
     Clear-Host
     Write-Host '=== System Cleanup ===' -ForegroundColor Cyan
-    Write-Host 'This will remove temporary files older than 1 day from:' -ForegroundColor Yellow
+    Write-Host 'Removes temporary files older than 1 day from:' -ForegroundColor Yellow
     Write-Host '  - User TEMP' -ForegroundColor Gray
     Write-Host '  - Windows TEMP' -ForegroundColor Gray
     Write-Host ''
 
     if (-not (Test-AdminRights)) {
-        Write-Host 'Administrator rights recommended for full cleanup.' -ForegroundColor Yellow
+        $continue = Request-Elevation
+        if (-not $continue) { return }
     }
 
     $confirm = Read-Host 'Continue? (Y/N)'
@@ -24,10 +25,7 @@ function Show-CleanupMenu {
 
     $cutoff = (Get-Date).AddDays(-1)
     $removed = 0
-    $paths = @(
-        $env:TEMP,
-        "$env:SystemRoot\Temp"
-    )
+    $paths = @($env:TEMP, "$env:SystemRoot\Temp")
 
     foreach ($p in $paths) {
         if (-not (Test-Path $p)) { continue }
