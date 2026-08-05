@@ -93,15 +93,16 @@ Get-ChildItem -Path $script:ScriptPath -Filter '*.psm1' -File |
 
 # Friendly names for known menus
 $menuMap = [ordered]@{
-    'Show-BatteryMenu'       = 'Battery Management'
-    'Show-CleanupMenu'       = 'Cleanup Utilities'
-    'Show-MemoryMenu'        = 'Memory Management'
-    'Show-NetworkMenu'       = 'Network Tools'
-    'Show-StorageMenu'       = 'Storage Management'
-    'Show-UpdatesMenu'       = 'Updates'
-    'Show-StartupMenu'       = 'Startup Applications'
-    'Show-WindowsRepairMenu' = 'Windows Repair'
-    'Show-ReportsMenu'       = 'Generate Reports'
+    'Show-BatteryMenu'         = 'Battery Management'
+    'Show-CleanupMenu'         = 'Cleanup Utilities'
+    'Show-MemoryMenu'          = 'Memory Management'
+    'Show-NetworkMenu'         = 'Network Tools'
+    'Show-StorageMenu'         = 'Storage Management'
+    'Show-UpdatesMenu'         = 'Updates'
+    'Show-StartupMenu'         = 'Startup Applications'
+    'Show-WindowsRepairMenu'   = 'Windows Repair'
+    'Show-ReportsMenu'         = 'Generate Reports'
+    'Show-InstallRestartMenu'  = 'Install Updates & Restart'
 }
 
 $index = 1
