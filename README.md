@@ -1,91 +1,73 @@
-# Aaron System Utility (ASU)
+```markdown
+# 🛠️ Aaron System Utility (ASU)
 
 [![PowerShell](https://img.shields.io/badge/PowerShell-5.1-blue)](https://github.com/AStrasler/Aaron-System-Utility)
-[![Windows](https://img.shields.io/badge/Windows-11-0078D4)](https://github.com/AStrasler/Aaron-System-Utility)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4)](https://github.com/AStrasler/Aaron-System-Utility)
+[![License](https://img.shields.io/badge/License-MIT-green)](License)
+[![Version](https://img.shields.io/badge/Version-1.0.1-orange)](VERSION)
 
-A professional, modular Windows maintenance and diagnostics utility written in **PowerShell 5.1**.
+A friendly, modular Windows maintenance & diagnostics utility written in **PowerShell 5.1**.
 
 ## ✨ Features
 
-- **Hardware Diagnostics** — CPU, GPU, BIOS, motherboard
-- **Memory Analysis** — Usage, top processes, pressure
-- **Storage Health** — SMART, TRIM, free space
-- **Startup Management** — List & categorize
-- **Network Diagnostics** — IP, DNS, connectivity tests
-- **Battery Analysis** — Health report
-- **Windows Repair** — SFC, DISM, CHKDSK
-- **Cleanup & Updates**
-- **HTML Reports** + Logging
+| Module | What it does |
+|--------|--------------|
+| 🔋 **Battery** | Battery status + HTML report |
+| 🧹 **Cleanup** | Safe cleanup of temp files older than 1 day |
+| 🧠 **Memory** | RAM usage + top memory consumers |
+| 🌐 **Network** | Local/public IP, gateway, connectivity test |
+| 💾 **Storage** | Disk health + free-space percentage |
+| 🚀 **Startup** | List startup applications |
+| 🔄 **Updates** | Pending Windows Update count & titles |
+| 🔧 **Windows Repair** | SFC, DISM RestoreHealth, schedule CHKDSK |
+| 📊 **Reports** | Timestamped HTML system report |
+
+Also includes console + daily file logging 📝
+
+## 📋 Requirements
+
+- Windows 10 or Windows 11  
+- PowerShell 5.1 (already included with Windows)  
+- Administrator rights (needed for repair & cleanup actions)
 
 ## 🚀 Quick Start
 
-1. Download the latest release or clone the repo.
-2. Extract and **run `ASU.bat` as Administrator**.
-3. Use the menu-driven interface.
+1. Clone or download the repo  
+2. Right-click **`ASU.bat`** → **Run as administrator**  
+3. Pick an option from the menu  
 
-## 📁 Project Structure
-
-Aaron-System-Utility/
-├── ASU.bat              # Launcher
-├── ASU.ps1              # Main script
-├── Modules/             # All functionality
-├── Config/settings.json
-├── Reports/ & Logs/     # Generated
-├── README.md
-└── LICENSE
-
-## Requirements
-
-- Windows 10 / 11
-- PowerShell 5.1 (pre-installed)
-- Administrator rights for repairs
-
-## License
-
-MIT License — feel free to fork and contribute.
-
----
-
-**Made with ❤️ for power users and sysadmins.**  
-Contributions, issues, and feature requests welcome!
-
-## 📂 Double-click Launcher
-
-If you want to open ASU by double-clicking a file, use the provided `launcher.bat` or create a shortcut:
-
-- Double-click `launcher.bat` (located next to `ASU.ps1`) to open PowerShell and run ASU while keeping the window open.
-- Contents of `launcher.bat`:
-
-```bat
-@echo off
-REM Simple double-click launcher for Aaron-System-Utility
-SET SCRIPT_DIR=%~dp0
-powershell -NoProfile -NoExit -ExecutionPolicy Bypass -File "%SCRIPT_DIR%ASU.ps1"
-```
-
-## 📌 Desktop / Start Menu Shortcut
-
-1. Right-click the Desktop and choose New → Shortcut.
-2. For Target, paste:
-
-```
-powershell -NoExit -ExecutionPolicy Bypass -File "C:\Path\To\Aaron-System-Utility\ASU.ps1"
-```
-
-3. Set "Start in" to the repo folder and finish. If the script needs admin rights, enable "Run as administrator" in Shortcut > Advanced.
-
-## ⚙️ Quick Troubleshooting
-
-- If PowerShell blocks the script, run once in an elevated PowerShell:
-
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
-```
-
-- Or launch without changing policies:
-
+**Alternative launch:**
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\ASU.ps1
 ```
 
+**Double-click launcher** (keeps the window open): use `launcher.bat`
+
+## 📁 Project Structure
+
+```
+Aaron-System-Utility/
+├── ASU.bat / ASU.ps1 / launcher.bat
+├── *.psm1                  # Feature modules
+├── settings.json
+├── VERSION
+├── CHANGELOG.md
+├── License
+├── tools/                  # Verification scripts
+├── Logs/                   # Created at runtime
+└── Reports/                # Created at runtime
+```
+
+## ⚙️ Configuration
+
+Edit `settings.json` to change logging level and health thresholds.
+
+## 📄 License
+
+MIT License — see [License](License).
+
+---
+
+Made with ❤️ for power users and sysadmins.  
+Contributions, issues, and feature requests are welcome! 🙌
+```
