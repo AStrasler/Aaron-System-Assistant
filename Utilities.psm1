@@ -30,4 +30,54 @@ function Request-Elevation {
     return $false
 }
 
-Export-ModuleMember -Function Test-AdminRights, Request-Elevation
+function Get-ASUTheme {
+    $appsUseLight = 1
+    try {
+        $appsUseLight = (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' -Name 'AppsUseLightTheme' -ErrorAction Stop).AppsUseLightTheme
+    } catch {}
+
+    if ($appsUseLight -eq 1) {
+        return [pscustomobject]@{
+            Name          = 'Light'
+            Title         = 'DarkCyan'
+            MenuItem      = 'DarkGreen'
+            MenuHighlight = 'DarkCyan'
+            Warning       = 'DarkYellow'
+            Error         = 'DarkRed'
+            Success       = 'DarkGreen'
+            Muted         = 'DarkGray'
+            Normal        = 'Black'
+        }
+    }
+    else {
+        return [pscustomobject]@{
+            Name          = 'Dark'
+            Title         = 'Cyan'
+            MenuItem      = 'Green'
+            MenuHighlight = 'Cyan'
+            Warning       = 'Yellow'
+            Error         = 'Red'
+            Success       = 'Green'
+            Muted         = 'DarkGray'
+            Normal        = 'Gray'
+        }
+    }
+}
+
+function Set-ASUConsoleTheme {
+    $theme = Get-ASUTheme
+    try {
+        if ($theme.Name -eq 'Light') {
+            $Host.UI.RawUI.BackgroundColor = 'White'
+            $Host.UI.RawUI.ForegroundColor = 'Black'
+        }
+        else {
+            $Host.UI.RawUI.BackgroundColor = 'Black'
+            $Host.UI.RawUI.ForegroundColor = 'Gray'
+        }
+        Clear-Host
+    } catch {}
+    return $theme
+}
+
+Export-ModuleMember -Function Test-AdminRights, Request-Elevation, Get-ASUTheme, Set-ASUConsoleTheme

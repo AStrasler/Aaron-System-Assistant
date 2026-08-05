@@ -6,6 +6,7 @@
 .NOTES
     Portable. Version read from VERSION file.
     Modules auto-discovered. LoggingLevel respected.
+    Console theme follows Windows light/dark mode.
 #>
 
 $script:ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
@@ -34,6 +35,15 @@ if (Test-Path $settingsPath) {
     }
 }
 
+# Load Utilities first (required for theme + admin helpers)
+$utilitiesPath = Join-Path $script:ScriptPath 'Utilities.psm1'
+if (Test-Path $utilitiesPath) {
+    Import-Module $utilitiesPath -Force -ErrorAction SilentlyContinue
+}
+
+# Apply theme early
+$script:Theme = Set-ASUConsoleTheme
+
 function Write-ASULog {
     param(
         [Parameter(Mandatory)][string]$Message,
@@ -44,31 +54,27 @@ function Write-ASULog {
     if (-not $levelOrder.ContainsKey($configLevel)) { $configLevel = 'Info' }
     if ($levelOrder[$Level] -lt $levelOrder[$configLevel]) { return }
 
-    $ts = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    $t = $script:Theme
+    $ts = Get-Date -Format 'HH:mm:ss'
     $color = switch ($Level) {
-        'Error'   { 'Red' }
-        'Warning' { 'Yellow' }
-        'Info'    { 'Green' }
-        'Debug'   { 'Gray' }
-        default   { 'White' }
+        'Error'   { $t.Error }
+        'Warning' { $t.Warning }
+        'Info'    { $t.Success }
+        'Debug'   { $t.Muted }
+        default   { $t.Normal }
     }
-    Write-Host "[$ts] [$Level] $Message" -ForegroundColor $color
+    Write-Host "  [$ts] $Message" -ForegroundColor $color
 
     $logDir = Join-Path $script:ScriptPath 'Logs'
     if (-not (Test-Path $logDir)) { New-Item -Path $logDir -ItemType Directory -Force | Out-Null }
     $logFile = Join-Path $logDir ("ASU_{0}.log" -f (Get-Date -Format 'yyyy-MM-dd'))
-    "$ts [$Level] $Message" | Add-Content -Path $logFile -Encoding UTF8 -ErrorAction SilentlyContinue
+    "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [$Level] $Message" | Add-Content -Path $logFile -Encoding UTF8 -ErrorAction SilentlyContinue
 }
 
 function Pause {
-    Write-Host "`nPress any key to continue..." -ForegroundColor DarkGray
+    Write-Host ''
+    Write-Host '  Press any key to continue...' -ForegroundColor $script:Theme.Muted
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
-}
-
-# Load Utilities first
-$utilitiesPath = Join-Path $script:ScriptPath 'Utilities.psm1'
-if (Test-Path $utilitiesPath) {
-    Import-Module $utilitiesPath -Force -ErrorAction SilentlyContinue
 }
 
 # Auto-discover remaining modules
@@ -114,39 +120,50 @@ foreach ($cmdName in $menuMap.Keys) {
 
 function Show-About {
     Clear-Host
-    Write-Host '========================================' -ForegroundColor Cyan
-    Write-Host "   Aaron System Utility v$($script:ASUVersion)" -ForegroundColor Cyan
-    Write-Host '========================================' -ForegroundColor Cyan
+    $t = $script:Theme
+
     Write-Host ''
-    Write-Host "Path      : $script:ScriptPath"
-    Write-Host "Admin     : $(if (Test-AdminRights) {'Yes'} else {'No'})"
-    Write-Host "Log Level : $($script:Config.LoggingLevel)"
-    Write-Host "Modules   : $($script:MenuItems.Count) loaded"
+    Write-Host '  Aaron System Utility' -ForegroundColor $t.Title
+    Write-Host "  v$($script:ASUVersion)" -ForegroundColor $t.Muted
     Write-Host ''
-    Write-Host 'Portable modular Windows maintenance tool.'
-    Write-Host 'Destructive actions ask for confirmation.'
+    Write-Host '  ────────────────────────────────────' -ForegroundColor $t.Muted
+    Write-Host ''
+    Write-Host "  Path       $($script:ScriptPath)" -ForegroundColor $t.Normal
+    Write-Host "  Admin      $(if (Test-AdminRights) {'Yes'} else {'No'})" -ForegroundColor $t.Normal
+    Write-Host "  Theme      $($t.Name)" -ForegroundColor $t.Normal
+    Write-Host "  Log Level  $($script:Config.LoggingLevel)" -ForegroundColor $t.Normal
+    Write-Host "  Modules    $($script:MenuItems.Count) loaded" -ForegroundColor $t.Normal
+    Write-Host ''
+    Write-Host '  Portable Windows maintenance tool.' -ForegroundColor $t.Muted
+    Write-Host '  Destructive actions always ask for confirmation.' -ForegroundColor $t.Muted
     Write-Host ''
     Pause
 }
 
 function Show-MainMenu {
     Clear-Host
-    Write-Host '========================================' -ForegroundColor Cyan
-    Write-Host "   AARON SYSTEM UTILITY (ASU) v$($script:ASUVersion)" -ForegroundColor Cyan
-    Write-Host '========================================' -ForegroundColor Cyan
+    $t = $script:Theme
+
+    Write-Host ''
+    Write-Host '  Aaron System Utility' -ForegroundColor $t.Title
+    Write-Host "  v$($script:ASUVersion)" -ForegroundColor $t.Muted
+    Write-Host ''
+    Write-Host '  ────────────────────────────────────' -ForegroundColor $t.Muted
     Write-Host ''
 
     if (-not (Test-AdminRights)) {
-        Write-Host 'Running without Administrator privileges.' -ForegroundColor Yellow
-        Write-Host 'Repair / Cleanup will offer to elevate.' -ForegroundColor Yellow
+        Write-Host '  Not running as Administrator' -ForegroundColor $t.Warning
+        Write-Host '  Repair / Cleanup can elevate when needed' -ForegroundColor $t.Muted
         Write-Host ''
     }
 
     foreach ($item in $script:MenuItems) {
-        Write-Host ("{0}. {1}" -f $item.Index, $item.Name) -ForegroundColor Green
+        Write-Host ("  {0}  {1}" -f $item.Index, $item.Name) -ForegroundColor $t.MenuItem
     }
-    Write-Host 'A. About / Help' -ForegroundColor Cyan
-    Write-Host '0. Exit' -ForegroundColor Red
+
+    Write-Host ''
+    Write-Host '  A  About / Help' -ForegroundColor $t.MenuHighlight
+    Write-Host '  0  Exit' -ForegroundColor $t.Error
     Write-Host ''
 }
 
@@ -154,10 +171,11 @@ Write-ASULog "ASU v$($script:ASUVersion) starting" -Level Info
 
 do {
     Show-MainMenu
-    $choice = Read-Host 'Enter your choice'
+    $choice = Read-Host '  Choice'
 
     if ($choice -eq '0') {
-        Write-Host 'Exiting ASU. Goodbye!' -ForegroundColor Yellow
+        Write-Host ''
+        Write-Host '  Exiting ASU. Goodbye!' -ForegroundColor $script:Theme.Warning
         Write-ASULog 'ASU exited by user' -Level Info
         exit 0
     }
@@ -168,7 +186,7 @@ do {
 
     $selected = $script:MenuItems | Where-Object { $_.Index -eq [int]$choice } | Select-Object -First 1
     if (-not $selected) {
-        Write-Host 'Invalid choice.' -ForegroundColor Red
+        Write-Host '  Invalid choice.' -ForegroundColor $script:Theme.Error
         Start-Sleep -Seconds 1
         continue
     }
@@ -176,7 +194,7 @@ do {
     try {
         & $selected.Command
     } catch {
-        Write-Host "Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "  Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor $script:Theme.Error
         Write-ASULog "Error in $($selected.Command): $_" -Level Error
         Pause
     }
