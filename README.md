@@ -39,24 +39,32 @@ Also includes console + daily file logging, light/dark theme support, and portab
 
 **Alternative (already elevated PowerShell):**
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\ASU.ps1
-Non-elevated / keep window open: use launcher.bat
-📁 Project Structure
-textAaron-System-Utility/
-├── ASU.bat / ASU.ps1 / launcher.bat
-├── *.psm1                  # Feature modules
-├── settings.json
-├── VERSION
-├── CHANGELOG.md
-├── License
-├── tools/                  # Verification scripts
-├── Logs/                   # Created at runtime
-└── Reports/                # Created at runtime
-⚙️ Configuration
-Edit settings.json to change logging level and health thresholds.
-📄 License
-MIT License — see License.
+    powershell -ExecutionPolicy Bypass -File .\ASU.ps1
 
-Made with ❤️ for power users and sysadmins.
+**Non-elevated / keep window open:** use `launcher.bat`
+
+## 📁 Project Structure
+
+    Aaron-System-Utility/
+    ├── ASU.bat / ASU.ps1 / launcher.bat
+    ├── *.psm1                  # Feature modules
+    ├── settings.json
+    ├── VERSION
+    ├── CHANGELOG.md
+    ├── License
+    ├── tools/                  # Verification scripts
+    ├── Logs/                   # Created at runtime
+    └── Reports/                # Created at runtime
+
+## ⚙️ Configuration
+
+Edit `settings.json` to change logging level and health thresholds.
+
+## 📄 License
+
+MIT License — see [License](License).
+
+---
+
+Made with ❤️ for power users and sysadmins.  
 Contributions, issues, and feature requests are welcome! 🙌
