@@ -1,30 +1,36 @@
-<# 
+<#
 .SYNOPSIS
-    Reports module for ASU
+    Updates module for ASU
 #>
 
-function Show-ReportsMenu {
+function Show-UpdatesMenu {
     Clear-Host
-    Write-Host "=== Generate Reports ===" -ForegroundColor Cyan
-    $ReportPath = Join-Path (Split-Path -Parent $PSScriptRoot) "Reports"
-    if (-not (Test-Path $ReportPath)) { New-Item -Path $ReportPath -ItemType Directory -Force | Out-Null }
-    
-    $ReportFile = Join-Path $ReportPath "ASU_Report_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
-    
-    # Basic HTML report
-    @"
-<html><head><title>ASU System Report</title></head><body>
-<h1>Aaron System Utility Report</h1>
-<p>Generated: $(Get-Date)</p>
-<h2>System Info</h2>
-<pre>$(Get-ComputerInfo | Out-String)</pre>
-</body></html>
-"@ | Out-File $ReportFile -Encoding UTF8
-    
-    Write-Host "HTML Report generated: $ReportFile" -ForegroundColor Green
-    Write-ASULog "Report generated: $ReportFile" -Level "Info"
+    Write-Host '=== Windows Updates ===' -ForegroundColor Cyan
+    Write-Host 'Checking for Windows Update status...' -ForegroundColor Yellow
+
+    try {
+        $UpdateSession = New-Object -ComObject Microsoft.Update.Session
+        $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
+        $SearchResult = $UpdateSearcher.Search('IsInstalled=0')
+        $count = $SearchResult.Updates.Count
+
+        Write-Host "Pending updates: $count" -ForegroundColor $(if ($count -gt 0) { 'Yellow' } else { 'Green' })
+
+        if ($count -gt 0) {
+            Write-Host "`nTop pending updates:" -ForegroundColor White
+            $SearchResult.Updates | Select-Object -First 5 | ForEach-Object {
+                Write-Host " - $($_.Title)" -ForegroundColor Gray
+            }
+        }
+    }
+    catch {
+        Write-Host 'Unable to query Windows Update COM interface. Use Settings > Windows Update instead.' -ForegroundColor Yellow
+        Write-ASULog "Windows Update check failed: $_" -Level 'Warning'
+    }
+
+    Write-ASULog 'Updates check performed' -Level 'Info'
     Pause
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-ReportsMenu
+Export-ModuleMember -Function Show-UpdatesMenu

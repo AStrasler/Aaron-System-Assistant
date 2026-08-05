@@ -1,29 +1,33 @@
-<# 
+<#
 .SYNOPSIS
-    Network diagnostics module for ASU
+    Storage health module for ASU
 #>
 
-function Show-NetworkMenu {
+function Show-StorageMenu {
     Clear-Host
-    Write-Host "=== Network Diagnostics ===" -ForegroundColor Cyan
-    
-    $IP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceIndex -ne 1}).IPAddress
-    Write-Host "Local IP: $IP" -ForegroundColor White
-    Write-Host "Gateway: $(Get-NetIPConfiguration | Select-Object -ExpandProperty IPv4DefaultGateway | Select-Object -ExpandProperty NextHop)" -ForegroundColor White
-    
-    try {
-        $PublicIP = Invoke-RestMethod -Uri 'https://api.ipify.org' -Method Get -ErrorAction Stop
-        Write-Host "Public IP: $PublicIP" -ForegroundColor White
-    } catch {
-        Write-Host "Public IP: Unavailable" -ForegroundColor Yellow
+    Write-Host '=== Storage Health ===' -ForegroundColor Cyan
+
+    Get-PhysicalDisk -ErrorAction SilentlyContinue |
+        Format-Table FriendlyName, MediaType, Size, BusType, HealthStatus -AutoSize
+
+    $Drives = Get-PSDrive -PSProvider FileSystem -ErrorAction SilentlyContinue
+    foreach ($Drive in $Drives) {
+        $total = $Drive.Used + $Drive.Free
+        $FreePercent = if ($total -gt 0) {
+            [math]::Round(($Drive.Free / $total) * 100, 1)
+        }
+        else {
+            0
+        }
+        $usedGB = [math]::Round($Drive.Used / 1GB, 2)
+        $freeGB = [math]::Round($Drive.Free / 1GB, 2)
+        $color = if ($freeGB -lt 10) { 'Red' } else { 'Green' }
+        Write-Host "$($Drive.Name): $usedGB GB used, $freeGB GB free ($FreePercent% free)" -ForegroundColor $color
     }
-    
-    Write-Host "`nRunning ping test to 8.8.8.8..." 
-    Test-Connection -ComputerName 8.8.8.8 -Count 4 -ErrorAction SilentlyContinue
-    
-    Write-ASULog "Network diagnostics performed" -Level "Info"
+
+    Write-ASULog 'Storage diagnostics viewed' -Level 'Info'
     Pause
     Show-MainMenu
 }
 
-Export-ModuleMember -Function Show-NetworkMenu
+Export-ModuleMember -Function Show-StorageMenu

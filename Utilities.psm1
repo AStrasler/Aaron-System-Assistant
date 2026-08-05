@@ -1,16 +1,12 @@
-<# 
+<#
 .SYNOPSIS
-    Startup management module for ASU
+    Utility functions for ASU
 #>
 
-function Show-StartupMenu {
-    Clear-Host
-    Write-Host "=== Startup Applications ===" -ForegroundColor Cyan
-    Get-CimInstance Win32_StartupCommand | Select-Object Name, Command, Location | Format-Table -AutoSize
-    Write-Host "`nNote: Use Task Manager or msconfig for management in this version." -ForegroundColor Yellow
-    Write-ASULog "Startup items viewed" -Level "Info"
-    Pause
-    Show-MainMenu
+function Test-AdminRights {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($identity)
+    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-Export-ModuleMember -Function Show-StartupMenu
+Export-ModuleMember -Function Test-AdminRights

@@ -1,13 +1,33 @@
-MIT License
+<#
+.SYNOPSIS
+    Cleanup module for ASU
+#>
 
-Copyright (c) 2026 Aaron System Utility Contributors
+function Show-CleanupMenu {
+    Clear-Host
+    Write-Host '=== System Cleanup ===' -ForegroundColor Cyan
+    Write-Host 'Cleaning temporary files older than 1 day...' -ForegroundColor Yellow
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+    $tempPath = $env:TEMP
+    $cutoff = (Get-Date).AddDays(-1)
+    $removed = 0
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    Get-ChildItem -Path $tempPath -Recurse -Force -ErrorAction SilentlyContinue |
+        Where-Object { -not $_.PSIsContainer -and $_.LastWriteTime -lt $cutoff } |
+        ForEach-Object {
+            try {
+                Remove-Item -LiteralPath $_.FullName -Force -ErrorAction Stop
+                $removed++
+            }
+            catch {
+                # Ignore locked or permission-denied files
+            }
+        }
+
+    Write-Host "Temp files cleaned. Removed approximately $removed items." -ForegroundColor Green
+    Write-ASULog "System cleanup performed (removed ~$removed items)" -Level 'Info'
+    Pause
+    Show-MainMenu
+}
+
+Export-ModuleMember -Function Show-CleanupMenu

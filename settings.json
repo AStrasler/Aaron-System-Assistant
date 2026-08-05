@@ -1,8 +1,10 @@
-# Changelog
-
-## [1.0.0] - 2026-07-11
-### Added
-- Initial modular structure
-- Core modules: Hardware, Memory, Storage, etc.
-- Dashboard and menu system
-- Logging and config support
+{
+  "LoggingLevel": "Info",
+  "ReportPath": "Reports",
+  "HealthThresholds": {
+    "MemoryWarning": 80,
+    "StorageWarning": 20,
+    "BatteryWarning": 70
+  },
+  "Theme": "Dark"
+}
