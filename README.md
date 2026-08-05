@@ -69,4 +69,3 @@ MIT License — see [License](License).
 
 Made with ❤️ for power users and sysadmins.  
 Contributions, issues, and feature requests are welcome! 🙌
-```
