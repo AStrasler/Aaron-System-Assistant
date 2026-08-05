@@ -1,4 +1,3 @@
-```markdown
 # 🛠️ Aaron System Utility (ASU)
 
 [![PowerShell](https://img.shields.io/badge/PowerShell-5.1-blue)](https://github.com/AStrasler/Aaron-System-Utility)
