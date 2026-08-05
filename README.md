@@ -5,7 +5,9 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](License)
 [![Version](https://img.shields.io/badge/Version-1.0.1-orange)](VERSION)
 
-A friendly, modular Windows maintenance & diagnostics utility written in **PowerShell 5.1**.
+A clean, modular Windows maintenance & diagnostics utility written in **PowerShell 5.1**.
+
+**Administrator rights are required for all usable features.**
 
 ## ✨ Features
 
@@ -21,31 +23,26 @@ A friendly, modular Windows maintenance & diagnostics utility written in **Power
 | 🔧 **Windows Repair** | SFC, DISM RestoreHealth, schedule CHKDSK |
 | 📊 **Reports** | Timestamped HTML system report |
 
-Also includes console + daily file logging 📝
+Also includes console + daily file logging, light/dark theme support, and portable launch.
 
 ## 📋 Requirements
 
 - Windows 10 or Windows 11  
-- PowerShell 5.1 (already included with Windows)  
-- Administrator rights (needed for repair & cleanup actions)
+- PowerShell 5.1 (included with Windows)  
+- **Administrator rights required for all usable features**
 
 ## 🚀 Quick Start
 
 1. Clone or download the repo  
-2. Right-click **`ASU.bat`** → **Run as administrator**  
+2. Double-click **`ASU.bat`** (requests elevation automatically)  
 3. Pick an option from the menu  
 
-**Alternative launch:**
+**Alternative (already elevated PowerShell):**
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\ASU.ps1
-```
-
-**Double-click launcher** (keeps the window open): use `launcher.bat`
-
-## 📁 Project Structure
-
-```
-Aaron-System-Utility/
+Non-elevated / keep window open: use launcher.bat
+📁 Project Structure
+animate-gaussianAaron-System-Utility/
 ├── ASU.bat / ASU.ps1 / launcher.bat
 ├── *.psm1                  # Feature modules
 ├── settings.json
@@ -55,17 +52,10 @@ Aaron-System-Utility/
 ├── tools/                  # Verification scripts
 ├── Logs/                   # Created at runtime
 └── Reports/                # Created at runtime
-```
+⚙️ Configuration
+Edit settings.json to change logging level and health thresholds.
+📄 License
+MIT License — see License.
 
-## ⚙️ Configuration
-
-Edit `settings.json` to change logging level and health thresholds.
-
-## 📄 License
-
-MIT License — see [License](License).
-
----
-
-Made with ❤️ for power users and sysadmins.  
+Made with ❤️ for power users and sysadmins.
 Contributions, issues, and feature requests are welcome! 🙌
