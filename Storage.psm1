@@ -25,9 +25,8 @@ function Show-StorageMenu {
         Write-Host "$($Drive.Name): $usedGB GB used, $freeGB GB free ($FreePercent% free)" -ForegroundColor $color
     }
 
-    Write-ASULog 'Storage diagnostics viewed' -Level 'Info'
+    Write-ASULog 'Storage diagnostics viewed' -Level Info
     Pause
-    Show-MainMenu
 }
 
 Export-ModuleMember -Function Show-StorageMenu

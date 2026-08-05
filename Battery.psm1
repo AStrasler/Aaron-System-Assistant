@@ -27,9 +27,8 @@ function Show-BatteryMenu {
         Write-Host 'No battery detected (Desktop system)' -ForegroundColor Yellow
     }
 
-    Write-ASULog 'Battery report generated' -Level 'Info'
+    Write-ASULog 'Battery report generated' -Level Info
     Pause
-    Show-MainMenu
 }
 
 Export-ModuleMember -Function Show-BatteryMenu

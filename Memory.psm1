@@ -24,9 +24,8 @@ function Show-MemoryMenu {
         Select-Object -First 5 |
         Format-Table Name, @{Name = 'Memory (MB)'; Expression = { [math]::Round($_.WorkingSet / 1MB, 2) }} -AutoSize
 
-    Write-ASULog 'Memory analysis viewed' -Level 'Info'
+    Write-ASULog 'Memory analysis viewed' -Level Info
     Pause
-    Show-MainMenu
 }
 
 Export-ModuleMember -Function Show-MemoryMenu

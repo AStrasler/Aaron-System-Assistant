@@ -10,9 +10,8 @@ function Show-StartupMenu {
         Select-Object Name, Command, Location |
         Format-Table -AutoSize
     Write-Host "`nNote: Use Task Manager or msconfig for management in this version." -ForegroundColor Yellow
-    Write-ASULog 'Startup items viewed' -Level 'Info'
+    Write-ASULog 'Startup items viewed' -Level Info
     Pause
-    Show-MainMenu
 }
 
 Export-ModuleMember -Function Show-StartupMenu

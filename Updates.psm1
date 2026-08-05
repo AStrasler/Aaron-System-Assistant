@@ -25,12 +25,11 @@ function Show-UpdatesMenu {
     }
     catch {
         Write-Host 'Unable to query Windows Update COM interface. Use Settings > Windows Update instead.' -ForegroundColor Yellow
-        Write-ASULog "Windows Update check failed: $_" -Level 'Warning'
+        Write-ASULog "Windows Update check failed: $_" -Level Warning
     }
 
-    Write-ASULog 'Updates check performed' -Level 'Info'
+    Write-ASULog 'Updates check performed' -Level Info
     Pause
-    Show-MainMenu
 }
 
 Export-ModuleMember -Function Show-UpdatesMenu

@@ -29,9 +29,8 @@ function Show-NetworkMenu {
     Write-Host "`nRunning ping test to 8.8.8.8..."
     Test-Connection -ComputerName 8.8.8.8 -Count 4 -ErrorAction SilentlyContinue
 
-    Write-ASULog 'Network diagnostics performed' -Level 'Info'
+    Write-ASULog 'Network diagnostics performed' -Level Info
     Pause
-    Show-MainMenu
 }
 
 Export-ModuleMember -Function Show-NetworkMenu
