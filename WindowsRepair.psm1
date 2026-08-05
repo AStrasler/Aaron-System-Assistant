@@ -1,3 +1,8 @@
+<#
+.SYNOPSIS
+    Windows Repair module for ASU
+#>
+
 function Show-WindowsRepairMenu {
     Clear-Host
     Write-Host '=== Windows Repair Tools ===' -ForegroundColor Cyan
@@ -37,3 +42,5 @@ function Show-WindowsRepairMenu {
     Pause
     Show-MainMenu
 }
+
+Export-ModuleMember -Function Show-WindowsRepairMenu
