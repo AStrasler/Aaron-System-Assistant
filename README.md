@@ -38,11 +38,12 @@ Also includes console + daily file logging, light/dark theme support, and portab
 3. Pick an option from the menu  
 
 **Alternative (already elevated PowerShell):**
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\ASU.ps1
 Non-elevated / keep window open: use launcher.bat
 📁 Project Structure
-animate-gaussianAaron-System-Utility/
+textAaron-System-Utility/
 ├── ASU.bat / ASU.ps1 / launcher.bat
 ├── *.psm1                  # Feature modules
 ├── settings.json
