@@ -4,22 +4,21 @@
 .SYNOPSIS
     Aaron System Assistant (ASA) - Main launcher
 .NOTES
-    Portable. Version read from VERSION file.
-    Modules auto-discovered. LoggingLevel respected.
-    Console theme follows Windows light/dark mode.
+    Portable. Version from VERSION file.
+    Menu numbers and natural-language intents both supported.
 #>
 
 $script:ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $global:ScriptPath = $script:ScriptPath
 Set-Location -Path $script:ScriptPath -ErrorAction SilentlyContinue
 
-# Version
 $versionFile = Join-Path $script:ScriptPath 'VERSION'
 $script:ASAVersion = if (Test-Path $versionFile) {
     (Get-Content $versionFile -Raw).Trim()
-} else { '2.0.0' }
+} else {
+    '2.0.0-dev'
+}
 
-# Settings
 $settingsPath = Join-Path $script:ScriptPath 'settings.json'
 if (Test-Path $settingsPath) {
     $script:Config = Get-Content $settingsPath -Raw | ConvertFrom-Json
@@ -35,35 +34,25 @@ if (Test-Path $settingsPath) {
     }
 }
 
-# Load Utilities first (required for theme + admin helpers)
 $utilitiesPath = Join-Path $script:ScriptPath 'Utilities.psm1'
 if (Test-Path $utilitiesPath) {
     Import-Module $utilitiesPath -Force -ErrorAction SilentlyContinue
 }
 
-# ---[ License System ]---
-# Import the licensing module (lives at repo root alongside the other modules)
 $licensingPath = Join-Path $script:ScriptPath 'LicenseCheck.psm1'
 if (Test-Path $licensingPath) {
     Import-Module $licensingPath -Force -ErrorAction SilentlyContinue
-    # Run license check
-    if (-not (Test-ASALicense)) {
-        # Test-ASALicense handles pause and exit internally
-        exit 1
+    if (Get-Command Test-ASALicense -ErrorAction SilentlyContinue) {
+        if (-not (Test-ASALicense)) { exit 1 }
     }
-} else {
-    Write-Host "⚠️ Licensing module not found. Running without license validation." -ForegroundColor Yellow
-    # Fallback function
-    function Test-ASALicense { return $true }
 }
 
-# Apply theme early
 $script:Theme = Set-ASAConsoleTheme
 
 function Write-ASALog {
     param(
         [Parameter(Mandatory)][string]$Message,
-        [ValidateSet('Info','Warning','Error','Debug')][string]$Level = 'Info'
+        [ValidateSet('Info', 'Warning', 'Error', 'Debug')][string]$Level = 'Info'
     )
     $levelOrder = @{ Debug = 0; Info = 1; Warning = 2; Error = 3 }
     $configLevel = $script:Config.LoggingLevel
@@ -82,9 +71,21 @@ function Write-ASALog {
     Write-Host "  [$ts] $Message" -ForegroundColor $color
 
     $logDir = Join-Path $script:ScriptPath 'Logs'
-    if (-not (Test-Path $logDir)) { New-Item -Path $logDir -ItemType Directory -Force | Out-Null }
+    if (-not (Test-Path $logDir)) {
+        New-Item -Path $logDir -ItemType Directory -Force | Out-Null
+    }
     $logFile = Join-Path $logDir ("ASA_{0}.log" -f (Get-Date -Format 'yyyy-MM-dd'))
-    "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [$Level] $Message" | Add-Content -Path $logFile -Encoding UTF8 -ErrorAction SilentlyContinue
+    "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [$Level] $Message" |
+        Add-Content -Path $logFile -Encoding UTF8 -ErrorAction SilentlyContinue
+}
+
+# Backward-compatible alias for any module still calling Write-ASULog
+function Write-ASULog {
+    param(
+        [Parameter(Mandatory)][string]$Message,
+        [ValidateSet('Info', 'Warning', 'Error', 'Debug')][string]$Level = 'Info'
+    )
+    Write-ASALog -Message $Message -Level $Level
 }
 
 function Pause {
@@ -93,20 +94,20 @@ function Pause {
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
 
-# Auto-discover remaining modules (For .psm1 files, which act as libraries)
 Get-ChildItem -Path $script:ScriptPath -Filter '*.psm1' -File |
-    Where-Object { $_.Name -ne 'Utilities.psm1' -and $_.Name -ne 'LicenseCheck.psm1' } |
+    Where-Object {
+        $_.Name -notin @('Utilities.psm1', 'LicenseCheck.psm1')
+    } |
     ForEach-Object {
         try {
             Import-Module $_.FullName -Force -ErrorAction Stop
             Write-ASALog "Loaded module: $($_.BaseName)" -Level Debug
-        } catch {
+        }
+        catch {
             Write-ASALog "Failed to load $($_.Name): $_" -Level Error
         }
     }
 
-# --- THE FIX: We create the menu based on the exported module functions ---
-# (Modules are .psm1 files, auto-imported above; each exports a Show-*Menu function)
 $menuMap = [ordered]@{
     'Show-BatteryMenu'        = 'Battery Management'
     'Show-CleanupMenu'        = 'Cleanup Utilities'
@@ -123,12 +124,11 @@ $menuMap = [ordered]@{
 $script:MenuItems = [System.Collections.Generic.List[object]]::new()
 $index = 1
 foreach ($functionName in $menuMap.Keys) {
-    # Only add the option if the function actually loaded (module imported successfully)
     if (Get-Command -Name $functionName -ErrorAction SilentlyContinue) {
         $script:MenuItems.Add([pscustomobject]@{
             Index   = $index
             Name    = $menuMap[$functionName]
-            Command = $functionName  # Store the function name directly
+            Command = $functionName
         })
         $index++
     }
@@ -139,7 +139,6 @@ foreach ($functionName in $menuMap.Keys) {
 function Show-About {
     Clear-Host
     $t = $script:Theme
-
     Write-Host ''
     Write-Host '  Aaron System Assistant' -ForegroundColor $t.Title
     Write-Host "  v$($script:ASAVersion)" -ForegroundColor $t.Muted
@@ -147,12 +146,13 @@ function Show-About {
     Write-Host '  ────────────────────────────────────' -ForegroundColor $t.Muted
     Write-Host ''
     Write-Host "  Path       $($script:ScriptPath)" -ForegroundColor $t.Normal
-    Write-Host "  Admin      $(if (Test-AdminRights) {'Yes'} else {'No'})" -ForegroundColor $t.Normal
+    Write-Host "  Admin      $(if (Test-AdminRights) { 'Yes' } else { 'No' })" -ForegroundColor $t.Normal
     Write-Host "  Theme      $($t.Name)" -ForegroundColor $t.Normal
     Write-Host "  Log Level  $($script:Config.LoggingLevel)" -ForegroundColor $t.Normal
     Write-Host "  Modules    $($script:MenuItems.Count) loaded" -ForegroundColor $t.Normal
     Write-Host ''
     Write-Host '  Your PC, now with a brain.' -ForegroundColor $t.Muted
+    Write-Host '  Type a menu number or a plain-English request.' -ForegroundColor $t.Muted
     Write-Host '  Destructive actions always ask for confirmation.' -ForegroundColor $t.Muted
     Write-Host ''
     Pause
@@ -161,7 +161,6 @@ function Show-About {
 function Show-MainMenu {
     Clear-Host
     $t = $script:Theme
-
     Write-Host ''
     Write-Host '  Aaron System Assistant' -ForegroundColor $t.Title
     Write-Host "  v$($script:ASAVersion)" -ForegroundColor $t.Muted
@@ -171,7 +170,7 @@ function Show-MainMenu {
 
     if (-not (Test-AdminRights)) {
         Write-Host '  Not running as Administrator' -ForegroundColor $t.Warning
-        Write-Host '  Repair / Cleanup can elevate when needed' -ForegroundColor $t.Muted
+        Write-Host '  Repair / Cleanup / Install can elevate when needed' -ForegroundColor $t.Muted
         Write-Host ''
     }
 
@@ -183,6 +182,8 @@ function Show-MainMenu {
     Write-Host '  A  About / Help' -ForegroundColor $t.MenuHighlight
     Write-Host '  0  Exit' -ForegroundColor $t.Error
     Write-Host ''
+    Write-Host '  Or type a request (e.g. "check battery", "clean temp")' -ForegroundColor $t.Muted
+    Write-Host ''
 }
 
 Write-ASALog "ASA v$($script:ASAVersion) starting" -Level Info
@@ -191,31 +192,56 @@ do {
     Show-MainMenu
     $choice = Read-Host '  Choice'
 
+    if ([string]::IsNullOrWhiteSpace($choice)) { continue }
+
     if ($choice -eq '0') {
         Write-Host ''
         Write-Host '  Exiting ASA. Goodbye!' -ForegroundColor $script:Theme.Warning
         Write-ASALog 'ASA exited by user' -Level Info
         exit 0
     }
+
     if ($choice -match '^[Aa]$') {
         Show-About
         continue
     }
 
-    $selected = $script:MenuItems | Where-Object { $_.Index -eq [int]$choice } | Select-Object -First 1
-    if (-not $selected) {
-        Write-Host '  Invalid choice.' -ForegroundColor $script:Theme.Error
-        Start-Sleep -Seconds 1
+    # Numeric menu selection
+    if ($choice -match '^\d+$') {
+        $selected = $script:MenuItems |
+            Where-Object { $_.Index -eq [int]$choice } |
+            Select-Object -First 1
+
+        if (-not $selected) {
+            Write-Host '  Invalid choice.' -ForegroundColor $script:Theme.Error
+            Start-Sleep -Seconds 1
+            continue
+        }
+
+        try {
+            & $selected.Command
+        }
+        catch {
+            Write-Host "  Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor $script:Theme.Error
+            Write-ASALog "Error running $($selected.Command): $_" -Level Error
+            Pause
+        }
         continue
     }
 
-    try {
-        # Because $selected.Command is now a function name (e.g., "Show-MemoryMenu"),
-        # already loaded from its .psm1 module, this invokes it directly.
-        & $selected.Command
-    } catch {
-        Write-Host "  Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor $script:Theme.Error
-        Write-ASALog "Error running $($selected.Command): $_" -Level Error
-        Pause
+    # Natural language via IntentEngine
+    if (Get-Command Invoke-ASAIntent -ErrorAction SilentlyContinue) {
+        try {
+            $null = Invoke-ASAIntent -Query $choice
+        }
+        catch {
+            Write-Host "  Intent error: $($_.Exception.Message)" -ForegroundColor $script:Theme.Error
+            Write-ASALog "Intent error: $_" -Level Error
+            Pause
+        }
+    }
+    else {
+        Write-Host '  Type a menu number, or ensure IntentEngine.psm1 is loaded.' -ForegroundColor $script:Theme.Warning
+        Start-Sleep -Seconds 1
     }
 } while ($true)

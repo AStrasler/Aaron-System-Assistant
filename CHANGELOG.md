@@ -1,26 +1,40 @@
 # Changelog
 
-All notable changes to Aaron System Utility (ASU) are documented in this file.
+All notable changes to Aaron System Assistant (ASA) are documented in this file.
+
+## [2.0.0-dev] - 2026-08-06
+
+### Added in 2.0.0-dev
+
+- Rebrand runtime to Aaron System Assistant (ASA)
+- Natural-language intents via IntentEngine (type requests at the prompt)
+- Install Updates and Restart menu path
+- LicenseCheck prototype (local / .env / offline fallback)
+- Light/dark theme helpers aligned with Windows app theme
+
+### Changed in 2.0.0-dev
+
+- Entry points: ASA.ps1 / ASA.bat (replaces ASU.*)
+- Logging: Write-ASALog (Write-ASULog kept as alias)
+- Menu supports numbers and free-text
+
+### Notes for 2.0.0-dev
+
+- Still MIT. Dual-license / AI Council items remain planning-only.
 
 ## [1.0.1] - 2026-08-05
 
-### Fixed
-- Restored correct content to every module file (previous commit had fully swapped contents).
-- Implemented missing `Updates.psm1` and `WindowsRepair.psm1`.
-- Corrected free-space percentage calculation in Storage module (was using Free/Used instead of Free/Total).
-- Added missing `Pause` helper required by all modules.
-- Restored valid `settings.json`, `LICENSE`, `VERSION`, and this changelog.
-- Hardened temporary-file cleanup to skip files newer than 1 day and locked files.
-- Made module import path handling and logging more robust.
+### Fixed in 1.0.1
 
-### Changed
-- Logging now writes both to console and to daily files under `Logs/`.
-- Network public-IP lookup uses a 5-second timeout.
-- Main script version banner updated to 1.0.1.
+- Module content mismatches, free-space math, Pause helper, settings/license/version
+
+### Changed in 1.0.1
+
+- File logging under Logs/
+- Network public-IP timeout
 
 ## [1.0.0] - 2026-07-11
 
-### Added
-- Initial modular structure.
-- Core modules and menu-driven interface.
-- Basic logging and report generation.
+### Added in 1.0.0
+
+- Initial modular ASU structure

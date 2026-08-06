@@ -1,73 +1,83 @@
-﻿# Utilities.psm1 — Core helper functions for ASA
-
-function Set-ASAConsoleTheme {
-    <#
-    .SYNOPSIS
-    Detects Windows theme (Dark/Light) and returns a color object.
-    .NOTES
-    All colors are valid System.ConsoleColor values.
-    #>
-    try {
-        $LightMode = (Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -ErrorAction SilentlyContinue).SystemUsesLightTheme
-
-        if ($LightMode -eq 1) {
-            # Light theme — uses dark text on light background
-            $Theme = @{
-                Name          = "Light"
-                Title         = "DarkBlue"
-                Muted         = "Gray"
-                Normal        = "DarkGray"
-                MenuItem      = "DarkCyan"
-                MenuHighlight = "DarkGreen"
-                Warning       = "DarkYellow"
-                Error         = "DarkRed"
-                Success       = "DarkGreen"
-                Background    = "White"
-            }
-        } else {
-            # Dark theme — uses light text on dark background (default)
-            $Theme = @{
-                Name          = "Dark"
-                Title         = "Cyan"
-                Muted         = "Gray"
-                Normal        = "White"
-                MenuItem      = "Cyan"
-                MenuHighlight = "Yellow"
-                Warning       = "Yellow"
-                Error         = "Red"
-                Success       = "Green"
-                Background    = "Black"
-            }
-        }
-    } catch {
-        # Fallback to safe dark theme if registry access fails
-        $Theme = @{
-            Name          = "Dark (Fallback)"
-            Title         = "Cyan"
-            Muted         = "Gray"
-            Normal        = "White"
-            MenuItem      = "Cyan"
-            MenuHighlight = "Yellow"
-            Warning       = "Yellow"
-            Error         = "Red"
-            Success       = "Green"
-            Background    = "Black"
-        }
-    }
-
-    # Return as a custom object so properties work with -ForegroundColor
-    return [pscustomobject]$Theme
-}
+﻿# Utilities.psm1 — Core helpers for ASA
 
 function Test-AdminRights {
-    <#
-    .SYNOPSIS
-    Checks if the current PowerShell session has administrator privileges.
-    #>
-    $Identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-    $Principal = New-Object System.Security.Principal.WindowsPrincipal($Identity)
-    return $Principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
+    $identity  = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($identity)
+    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-# Export the functions so they're available in ASA.ps1
-Export-ModuleMember -Function Set-ASAConsoleTheme, Test-AdminRights
+function Request-Elevation {
+    if (Test-AdminRights) { return $true }
+
+    Write-Host '  This action requires Administrator privileges.' -ForegroundColor Yellow
+    $answer = Read-Host '  Re-launch ASA as Administrator? (Y/N)'
+    if ($answer -notmatch '^[Yy]') {
+        Write-Host '  Cancelled.' -ForegroundColor Yellow
+        return $true
+    }
+
+    $scriptPath = Join-Path $global:ScriptPath 'ASA.ps1'
+    Start-Process -FilePath 'powershell.exe' -ArgumentList @(
+        '-NoProfile',
+        '-ExecutionPolicy', 'Bypass',
+        '-File', "`"$scriptPath`""
+    ) -Verb RunAs
+
+    Write-Host '  Elevated instance started. You can close this window.' -ForegroundColor Green
+    return $false
+}
+
+function Set-ASAConsoleTheme {
+    $appsUseLight = 1
+    try {
+        $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize'
+        $props = Get-ItemProperty -Path $key -ErrorAction Stop
+        if ($null -ne $props.AppsUseLightTheme) {
+            $appsUseLight = $props.AppsUseLightTheme
+        }
+        elseif ($null -ne $props.SystemUsesLightTheme) {
+            $appsUseLight = $props.SystemUsesLightTheme
+        }
+    } catch {}
+
+    if ($appsUseLight -eq 1) {
+        $theme = [pscustomobject]@{
+            Name          = 'Light'
+            Title         = 'DarkCyan'
+            Muted         = 'DarkGray'
+            Normal        = 'Black'
+            MenuItem      = 'DarkGreen'
+            MenuHighlight = 'DarkCyan'
+            Warning       = 'DarkYellow'
+            Error         = 'DarkRed'
+            Success       = 'DarkGreen'
+        }
+        try {
+            $Host.UI.RawUI.BackgroundColor = 'White'
+            $Host.UI.RawUI.ForegroundColor = 'Black'
+            Clear-Host
+        } catch {}
+    }
+    else {
+        $theme = [pscustomobject]@{
+            Name          = 'Dark'
+            Title         = 'Cyan'
+            Muted         = 'DarkGray'
+            Normal        = 'Gray'
+            MenuItem      = 'Green'
+            MenuHighlight = 'Cyan'
+            Warning       = 'Yellow'
+            Error         = 'Red'
+            Success       = 'Green'
+        }
+        try {
+            $Host.UI.RawUI.BackgroundColor = 'Black'
+            $Host.UI.RawUI.ForegroundColor = 'Gray'
+            Clear-Host
+        } catch {}
+    }
+
+    return $theme
+}
+
+Export-ModuleMember -Function Test-AdminRights, Request-Elevation, Set-ASAConsoleTheme
