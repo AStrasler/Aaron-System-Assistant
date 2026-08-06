@@ -2,7 +2,7 @@
 # Supports: Free tier Keymint API, local fallback, and pause system
 
 # ---[ Load .env file ]---
-function Import-ASAEnvFile {
+function Load-EnvFile {
     param([string]$Path = "$PSScriptRoot\.env")
 
     if (Test-Path $Path) {
@@ -20,7 +20,7 @@ function Import-ASAEnvFile {
 }
 
 # Load .env at startup
-Import-ASAEnvFile
+Load-EnvFile
 
 # ---[ Configuration ]---
 $script:LicensePath = Join-Path $PSScriptRoot "license.key"
@@ -95,19 +95,44 @@ function Invoke-KeymintRequest {
     }
 }
 
+# ---[ NEW: Use Pre-existing License Key from .env ]---
 function New-ASAKeymintLicense {
     <#
     .SYNOPSIS
-    Creates a new free license via Keymint API.
+    Creates a new free license via Keymint API, OR uses a pre-existing key from .env
     #>
     $Fingerprint = Get-ASAFingerprint
+
+    # Check if the user provided a pre-existing key in the .env file
+    $PreExistingKey = $env:KEYMINT_LICENSE_KEY
+
+    if ($PreExistingKey) {
+        Write-Host "🔑 Found pre-existing license key in .env. Activating..." -ForegroundColor Cyan
+
+        # We don't create a new one. We validate the existing one and save it locally.
+        $License = @{
+            type        = "free"
+            licensee    = "Pre-existing Owner License"
+            fingerprint = $Fingerprint
+            keymintId   = "Manual-Key"
+            issued      = (Get-Date).ToString("yyyy-MM-dd")
+            expiry      = (Get-Date).AddYears(1).ToString("yyyy-MM-dd") # Assume 1 year for manual keys
+            key         = $PreExistingKey
+        }
+        $License | ConvertTo-Json -Depth 3 | Set-Content $script:LicensePath
+        Write-Host "✅ License key activated and saved locally." -ForegroundColor Green
+        return $true
+    }
+
+    # --- If no pre-existing key was found, fall back to generating a new one via API ---
+    Write-Host "🔑 No pre-existing key found. Generating new license via Keymint..." -ForegroundColor Yellow
 
     $LicenseData = @{
         customer = @{
             name  = "Personal / Open-Source User"
             email = "user-$Fingerprint@localhost"
         }
-        product   = "ASA"
+        product   = $env:KEYMINT_PRODUCT_ID
         plan      = "free"
         hostId    = $Fingerprint
         metadata  = @{
@@ -304,6 +329,7 @@ function Resume-ASA {
 function Invoke-ASAForceResume {
     param([string]$AdminKey)
 
+    # 🔒 SECURITY NOTE: Move this to your .env file!
     $ValidAdminKey = "Bore#621Rise!"  # CHANGE THIS!
 
     if ($AdminKey -eq $ValidAdminKey) {
