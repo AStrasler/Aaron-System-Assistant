@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2  # <-- This updated version fixes the Node.js warning!
+
+      - name: Run PowerShell Tests
+        shell: pwsh
+        run: |
+          # Install Pester if you don't have it
+          Install-Module -Name Pester -Force -SkipPublisherCheck
+          
+          # Run your tests (assuming you have a tests folder)
+          Invoke-Pester -Path ./tests -Output Detailed
