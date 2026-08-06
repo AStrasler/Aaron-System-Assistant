@@ -1,5 +1,5 @@
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definition)
-$path = Join-Path $root 'ASU.ps1'
+$path = Join-Path $root 'ASA.ps1'
 $tokens = $null
 $errors = $null
 [System.Management.Automation.Language.Parser]::ParseFile($path, [ref]$tokens, [ref]$errors) | Out-Null

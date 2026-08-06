@@ -2,8 +2,8 @@
 # Supports: Free tier Keymint API, local fallback, and pause system
 
 # ---[ Load .env file ]---
-function Load-EnvFile {
-    param([string]$Path = "$PSScriptRoot\..\.env")
+function Import-ASAEnvFile {
+    param([string]$Path = "$PSScriptRoot\.env")
 
     if (Test-Path $Path) {
         $lines = Get-Content $Path -ErrorAction SilentlyContinue
@@ -20,7 +20,7 @@ function Load-EnvFile {
 }
 
 # Load .env at startup
-Load-EnvFile
+Import-ASAEnvFile
 
 # ---[ Configuration ]---
 $script:LicensePath = Join-Path $PSScriptRoot "license.key"

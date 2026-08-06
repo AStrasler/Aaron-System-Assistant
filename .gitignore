@@ -25,7 +25,10 @@ Thumbs.db
 keymint.config.json
 Licensing/keymint.config.json
 
-# License files (generated per machine)
+# License files (generated per machine, written to repo root)
+license.key
+paused.json
+resume.key
 Licensing/*.key
 Licensing/*.json
 Licensing/paused.json

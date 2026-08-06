@@ -42,8 +42,8 @@ if (Test-Path $utilitiesPath) {
 }
 
 # ---[ License System ]---
-# Import the licensing module
-$licensingPath = Join-Path $script:ScriptPath 'Licensing' 'LicenseCheck.psm1'
+# Import the licensing module (lives at repo root alongside the other modules)
+$licensingPath = Join-Path $script:ScriptPath 'LicenseCheck.psm1'
 if (Test-Path $licensingPath) {
     Import-Module $licensingPath -Force -ErrorAction SilentlyContinue
     # Run license check
@@ -105,29 +105,30 @@ Get-ChildItem -Path $script:ScriptPath -Filter '*.psm1' -File |
         }
     }
 
-# --- THE FIX: We create the menu based on the actual .ps1 file paths ---
+# --- THE FIX: We create the menu based on the exported module functions ---
+# (Modules are .psm1 files, auto-imported above; each exports a Show-*Menu function)
 $menuMap = [ordered]@{
-    '.\Battery.ps1'        = 'Battery Management'
-    '.\Cleanup.ps1'        = 'Cleanup Utilities'
-    '.\Memory.ps1'         = 'Memory Management'
-    '.\Network.ps1'        = 'Network Tools'
-    '.\Storage.ps1'        = 'Storage Management'
-    '.\Updates.ps1'        = 'Updates'
-    '.\Startup.ps1'        = 'Startup Applications'
-    '.\WindowsRepair.ps1'  = 'Windows Repair'
-    '.\Reports.ps1'        = 'Generate Reports'
-    '.\InstallRestart.ps1' = 'Install Updates & Restart'
+    'Show-BatteryMenu'        = 'Battery Management'
+    'Show-CleanupMenu'        = 'Cleanup Utilities'
+    'Show-MemoryMenu'         = 'Memory Management'
+    'Show-NetworkMenu'        = 'Network Tools'
+    'Show-StorageMenu'        = 'Storage Management'
+    'Show-UpdatesMenu'        = 'Updates'
+    'Show-StartupMenu'        = 'Startup Applications'
+    'Show-WindowsRepairMenu'  = 'Windows Repair'
+    'Show-ReportsMenu'        = 'Generate Reports'
+    'Show-InstallRestartMenu' = 'Install Updates & Restart'
 }
 
 $script:MenuItems = [System.Collections.Generic.List[object]]::new()
 $index = 1
-foreach ($filePath in $menuMap.Keys) {
-    # Only add the option if the file actually exists
-    if (Test-Path $filePath) {
+foreach ($functionName in $menuMap.Keys) {
+    # Only add the option if the function actually loaded (module imported successfully)
+    if (Get-Command -Name $functionName -ErrorAction SilentlyContinue) {
         $script:MenuItems.Add([pscustomobject]@{
             Index   = $index
-            Name    = $menuMap[$filePath]
-            Command = $filePath  # Store the file path directly
+            Name    = $menuMap[$functionName]
+            Command = $functionName  # Store the function name directly
         })
         $index++
     }
@@ -209,11 +210,9 @@ do {
     }
 
     try {
-        # --- THE SURGICAL FIX ---
-        # Because $selected.Command is now a file path (e.g., ".\Memory.ps1"), 
-        # this executes that entire script file directly.
+        # Because $selected.Command is now a function name (e.g., "Show-MemoryMenu"),
+        # already loaded from its .psm1 module, this invokes it directly.
         & $selected.Command
-        # ------------------------
     } catch {
         Write-Host "  Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor $script:Theme.Error
         Write-ASALog "Error running $($selected.Command): $_" -Level Error
