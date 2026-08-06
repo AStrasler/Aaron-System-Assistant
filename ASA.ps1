@@ -93,9 +93,7 @@ function Pause {
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
 
-# Auto-discover remaining modules
-$script:MenuItems = [System.Collections.Generic.List[object]]::new()
-
+# Auto-discover remaining modules (For .psm1 files, which act as libraries)
 Get-ChildItem -Path $script:ScriptPath -Filter '*.psm1' -File |
     Where-Object { $_.Name -ne 'Utilities.psm1' -and $_.Name -ne 'LicenseCheck.psm1' } |
     ForEach-Object {
@@ -107,27 +105,29 @@ Get-ChildItem -Path $script:ScriptPath -Filter '*.psm1' -File |
         }
     }
 
-# Friendly names for known menus
+# --- THE FIX: We create the menu based on the actual .ps1 file paths ---
 $menuMap = [ordered]@{
-    'Show-BatteryMenu'         = 'Battery Management'
-    'Show-CleanupMenu'         = 'Cleanup Utilities'
-    'Show-MemoryMenu'          = 'Memory Management'
-    'Show-NetworkMenu'         = 'Network Tools'
-    'Show-StorageMenu'         = 'Storage Management'
-    'Show-UpdatesMenu'         = 'Updates'
-    'Show-StartupMenu'         = 'Startup Applications'
-    'Show-WindowsRepairMenu'   = 'Windows Repair'
-    'Show-ReportsMenu'         = 'Generate Reports'
-    'Show-InstallRestartMenu'  = 'Install Updates & Restart'
+    '.\Battery.ps1'        = 'Battery Management'
+    '.\Cleanup.ps1'        = 'Cleanup Utilities'
+    '.\Memory.ps1'         = 'Memory Management'
+    '.\Network.ps1'        = 'Network Tools'
+    '.\Storage.ps1'        = 'Storage Management'
+    '.\Updates.ps1'        = 'Updates'
+    '.\Startup.ps1'        = 'Startup Applications'
+    '.\WindowsRepair.ps1'  = 'Windows Repair'
+    '.\Reports.ps1'        = 'Generate Reports'
+    '.\InstallRestart.ps1' = 'Install Updates & Restart'
 }
 
+$script:MenuItems = [System.Collections.Generic.List[object]]::new()
 $index = 1
-foreach ($cmdName in $menuMap.Keys) {
-    if (Get-Command $cmdName -ErrorAction SilentlyContinue) {
+foreach ($filePath in $menuMap.Keys) {
+    # Only add the option if the file actually exists
+    if (Test-Path $filePath) {
         $script:MenuItems.Add([pscustomobject]@{
             Index   = $index
-            Name    = $menuMap[$cmdName]
-            Command = $cmdName
+            Name    = $menuMap[$filePath]
+            Command = $filePath  # Store the file path directly
         })
         $index++
     }
@@ -210,13 +210,13 @@ do {
 
     try {
         # --- THE SURGICAL FIX ---
-        # We grab the actual command object from the system, not just the string.
-        $cmdToRun = Get-Command -Name $selected.Command -ErrorAction Stop
-        & $cmdToRun
+        # Because $selected.Command is now a file path (e.g., ".\Memory.ps1"), 
+        # this executes that entire script file directly.
+        & $selected.Command
         # ------------------------
     } catch {
         Write-Host "  Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor $script:Theme.Error
-        Write-ASALog "Error in $($selected.Command): $_" -Level Error
+        Write-ASALog "Error running $($selected.Command): $_" -Level Error
         Pause
     }
 } while ($true)
