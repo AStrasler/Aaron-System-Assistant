@@ -1,30 +1,53 @@
 <#
 .SYNOPSIS
-    Memory analysis module for ASU
+    Memory analysis module for ASA
 #>
 
 function Show-MemoryMenu {
     Clear-Host
-    Write-Host '=== Memory Analysis ===' -ForegroundColor Cyan
+    Write-Host "`n  🧠 Memory Analysis" -ForegroundColor Cyan
+    Write-Host "  ──────────────────" -ForegroundColor Gray
 
-    $ComputerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
-    $OS = Get-CimInstance -ClassName Win32_OperatingSystem
+    $ComputerSystem = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue
+    $OS = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue
+
+    if (-not $ComputerSystem -or -not $OS) {
+        Write-Host "  ❌ Failed to retrieve system memory information." -ForegroundColor Red
+        Pause
+        return
+    }
 
     $installedGB = [math]::Round($ComputerSystem.TotalPhysicalMemory / 1GB, 2)
     $usableGB = [math]::Round($OS.TotalVisibleMemorySize / 1MB, 2)
-    $usagePercent = [math]::Round((($OS.TotalVisibleMemorySize - $OS.FreePhysicalMemory) / $OS.TotalVisibleMemorySize) * 100)
+    $freeGB = [math]::Round($OS.FreePhysicalMemory / 1MB, 2)
+    $usedGB = $usableGB - $freeGB
+    $usagePercent = [math]::Round(($usedGB / $usableGB) * 100)
 
-    Write-Host "Installed RAM: $installedGB GB" -ForegroundColor White
-    Write-Host "Usable RAM: $usableGB GB" -ForegroundColor White
-    Write-Host "Current Usage: $usagePercent%" -ForegroundColor White
+    # Color-code the usage percentage
+    $usageColor = if ($usagePercent -gt 80) { "Red" } elseif ($usagePercent -gt 60) { "Yellow" } else { "Green" }
 
-    Write-Host "`nTop 5 Memory Consumers:" -ForegroundColor Yellow
-    Get-Process |
-        Sort-Object WorkingSet -Descending |
-        Select-Object -First 5 |
-        Format-Table Name, @{Name = 'Memory (MB)'; Expression = { [math]::Round($_.WorkingSet / 1MB, 2) }} -AutoSize
+    Write-Host ""
+    Write-Host "  📊 Memory Summary:" -ForegroundColor Yellow
+    Write-Host "    Installed RAM  : $installedGB GB" -ForegroundColor White
+    Write-Host "    Usable RAM     : $usableGB GB" -ForegroundColor White
+    Write-Host "    Used RAM       : $usedGB GB" -ForegroundColor White
+    Write-Host "    Free RAM       : $freeGB GB" -ForegroundColor White
+    Write-Host "    Usage          : $usagePercent%" -ForegroundColor $usageColor
 
-    Write-ASULog 'Memory analysis viewed' -Level Info
+    Write-Host "`n  📋 Top 5 Memory Consumers:" -ForegroundColor Yellow
+    $topProcesses = Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5
+
+    if ($topProcesses) {
+        foreach ($proc in $topProcesses) {
+            $memMB = [math]::Round($proc.WorkingSet / 1MB, 2)
+            $color = if ($memMB -gt 500) { "Red" } elseif ($memMB -gt 100) { "Yellow" } else { "White" }
+            Write-Host "    $($proc.Name) : $memMB MB" -ForegroundColor $color
+        }
+    } else {
+        Write-Host "    No process data available." -ForegroundColor Gray
+    }
+
+    Write-ASALog "Memory analysis viewed (Usage: $usagePercent%)" -Level Info
     Pause
 }
 

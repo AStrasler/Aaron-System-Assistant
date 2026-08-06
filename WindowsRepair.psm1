@@ -1,56 +1,87 @@
 <#
 .SYNOPSIS
-    Windows Repair module for ASU
+    Windows Repair module for ASA
 #>
 
 function Show-WindowsRepairMenu {
     Clear-Host
-    Write-Host '=== Windows Repair Tools ===' -ForegroundColor Cyan
-    Write-Host '1. Run SFC /scannow' -ForegroundColor White
-    Write-Host '2. Run DISM RestoreHealth' -ForegroundColor White
-    Write-Host '3. Schedule CHKDSK /f on C: (next reboot)' -ForegroundColor White
-    Write-Host '0. Back' -ForegroundColor Yellow
-    Write-Host ''
+    Write-Host "`n  🔧 Windows Repair Tools" -ForegroundColor Cyan
+    Write-Host "  ──────────────────────" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "  1. Run SFC /scannow" -ForegroundColor White
+    Write-Host "  2. Run DISM RestoreHealth" -ForegroundColor White
+    Write-Host "  3. Schedule CHKDSK /f on C: (next reboot)" -ForegroundColor White
+    Write-Host "  0. Back" -ForegroundColor Yellow
+    Write-Host ""
 
+    # Check admin rights
     if (-not (Test-AdminRights)) {
-        $continue = Request-Elevation
-        if (-not $continue) { return }
-        if (-not (Test-AdminRights)) {
-            Write-Host 'Administrator rights still required. Aborting.' -ForegroundColor Red
-            Pause
-            return
-        }
+        Write-Host "  ⚠️ Administrator rights required for repairs." -ForegroundColor Yellow
+        Write-Host "  💡 Run ASA as Administrator and try again." -ForegroundColor Gray
+        Pause
+        return
     }
 
-    $choice = Read-Host 'Enter choice'
+    $choice = Read-Host "  Enter choice"
     switch ($choice) {
         '1' {
-            $confirm = Read-Host 'SFC can take 10-30+ minutes. Continue? (Y/N)'
+            Write-Host ""
+            $confirm = Read-Host '  SFC can take 10-30+ minutes. Continue? (Y/N)'
             if ($confirm -match '^[Yy]') {
-                Write-Host 'Running SFC... do not close this window.' -ForegroundColor Yellow
+                Write-Host ""
+                Write-Host "  🔍 Running SFC /scannow..." -ForegroundColor Yellow
+                Write-Host "  ⚠️ Do not close this window." -ForegroundColor Yellow
+                Write-Host ""
                 sfc /scannow
-                Write-ASULog 'SFC scan completed' -Level Info
+                Write-Host ""
+                Write-Host "  ✅ SFC scan completed." -ForegroundColor Green
+                Write-ASALog "SFC scan completed" -Level Info
+            } else {
+                Write-Host "  Cancelled." -ForegroundColor Yellow
             }
         }
         '2' {
-            $confirm = Read-Host 'DISM can take a long time and needs internet. Continue? (Y/N)'
+            Write-Host ""
+            $confirm = Read-Host '  DISM can take a long time and needs internet. Continue? (Y/N)'
             if ($confirm -match '^[Yy]') {
-                Write-Host 'Running DISM... do not close this window.' -ForegroundColor Yellow
+                Write-Host ""
+                Write-Host "  🔍 Running DISM /Online /Cleanup-Image /RestoreHealth..." -ForegroundColor Yellow
+                Write-Host "  ⚠️ Do not close this window." -ForegroundColor Yellow
+                Write-Host ""
                 DISM /Online /Cleanup-Image /RestoreHealth
-                Write-ASULog 'DISM RestoreHealth completed' -Level Info
+                Write-Host ""
+                Write-Host "  ✅ DISM RestoreHealth completed." -ForegroundColor Green
+                Write-ASALog "DISM RestoreHealth completed" -Level Info
+            } else {
+                Write-Host "  Cancelled." -ForegroundColor Yellow
             }
         }
         '3' {
-            Write-Host 'This schedules CHKDSK /f on C: for the next reboot.' -ForegroundColor Yellow
-            $confirm = Read-Host 'Type YES to confirm'
+            Write-Host ""
+            Write-Host "  🔄 This schedules CHKDSK /f on C: for the next reboot." -ForegroundColor Yellow
+            Write-Host "  ⚠️ This will check the disk for errors on next restart." -ForegroundColor Gray
+            Write-Host ""
+            $confirm = Read-Host '  Type YES to schedule CHKDSK'
             if ($confirm -eq 'YES') {
-                Write-Host 'Run the following from an elevated prompt if needed:' -ForegroundColor Gray
-                Write-Host '  chkdsk C: /f' -ForegroundColor Gray
-                Write-ASULog 'CHKDSK schedule requested' -Level Info
+                try {
+                    chkdsk C: /f
+                    Write-Host ""
+                    Write-Host "  ✅ CHKDSK scheduled for next reboot." -ForegroundColor Green
+                    Write-ASALog "CHKDSK schedule requested" -Level Info
+                } catch {
+                    Write-Host "  ❌ Failed to schedule CHKDSK: $_" -ForegroundColor Red
+                    Write-ASALog "CHKDSK schedule failed: $_" -Level Error
+                }
+            } else {
+                Write-Host "  Cancelled." -ForegroundColor Yellow
             }
         }
-        '0' { return }
-        default { Write-Host 'Invalid choice' -ForegroundColor Red }
+        '0' {
+            return
+        }
+        default {
+            Write-Host "  ❌ Invalid choice." -ForegroundColor Red
+        }
     }
     Pause
 }

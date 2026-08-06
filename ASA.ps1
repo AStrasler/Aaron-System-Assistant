@@ -2,7 +2,7 @@
 
 <#
 .SYNOPSIS
-    Aaron System Utility (ASU) - Main launcher
+    Aaron System Assistant (ASA) - Main launcher
 .NOTES
     Portable. Version read from VERSION file.
     Modules auto-discovered. LoggingLevel respected.
@@ -15,9 +15,9 @@ Set-Location -Path $script:ScriptPath -ErrorAction SilentlyContinue
 
 # Version
 $versionFile = Join-Path $script:ScriptPath 'VERSION'
-$script:ASUVersion = if (Test-Path $versionFile) {
+$script:ASAVersion = if (Test-Path $versionFile) {
     (Get-Content $versionFile -Raw).Trim()
-} else { '1.0.1' }
+} else { '2.0.0' }
 
 # Settings
 $settingsPath = Join-Path $script:ScriptPath 'settings.json'
@@ -41,10 +41,26 @@ if (Test-Path $utilitiesPath) {
     Import-Module $utilitiesPath -Force -ErrorAction SilentlyContinue
 }
 
-# Apply theme early
-$script:Theme = Set-ASUConsoleTheme
+# ---[ License System ]---
+# Import the licensing module
+$licensingPath = Join-Path $script:ScriptPath 'Licensing' 'LicenseCheck.psm1'
+if (Test-Path $licensingPath) {
+    Import-Module $licensingPath -Force -ErrorAction SilentlyContinue
+    # Run license check
+    if (-not (Test-ASALicense)) {
+        # Test-ASALicense handles pause and exit internally
+        exit 1
+    }
+} else {
+    Write-Host "⚠️ Licensing module not found. Running without license validation." -ForegroundColor Yellow
+    # Fallback function
+    function Test-ASALicense { return $true }
+}
 
-function Write-ASULog {
+# Apply theme early
+$script:Theme = Set-ASAConsoleTheme
+
+function Write-ASALog {
     param(
         [Parameter(Mandatory)][string]$Message,
         [ValidateSet('Info','Warning','Error','Debug')][string]$Level = 'Info'
@@ -67,7 +83,7 @@ function Write-ASULog {
 
     $logDir = Join-Path $script:ScriptPath 'Logs'
     if (-not (Test-Path $logDir)) { New-Item -Path $logDir -ItemType Directory -Force | Out-Null }
-    $logFile = Join-Path $logDir ("ASU_{0}.log" -f (Get-Date -Format 'yyyy-MM-dd'))
+    $logFile = Join-Path $logDir ("ASA_{0}.log" -f (Get-Date -Format 'yyyy-MM-dd'))
     "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [$Level] $Message" | Add-Content -Path $logFile -Encoding UTF8 -ErrorAction SilentlyContinue
 }
 
@@ -81,13 +97,13 @@ function Pause {
 $script:MenuItems = [System.Collections.Generic.List[object]]::new()
 
 Get-ChildItem -Path $script:ScriptPath -Filter '*.psm1' -File |
-    Where-Object { $_.Name -ne 'Utilities.psm1' } |
+    Where-Object { $_.Name -ne 'Utilities.psm1' -and $_.Name -ne 'LicenseCheck.psm1' } |
     ForEach-Object {
         try {
             Import-Module $_.FullName -Force -ErrorAction Stop
-            Write-ASULog "Loaded module: $($_.BaseName)" -Level Debug
+            Write-ASALog "Loaded module: $($_.BaseName)" -Level Debug
         } catch {
-            Write-ASULog "Failed to load $($_.Name): $_" -Level Error
+            Write-ASALog "Failed to load $($_.Name): $_" -Level Error
         }
     }
 
@@ -117,15 +133,15 @@ foreach ($cmdName in $menuMap.Keys) {
     }
 }
 
-[Console]::Title = "Aaron System Utility v$($script:ASUVersion)"
+[Console]::Title = "Aaron System Assistant v$($script:ASAVersion)"
 
 function Show-About {
     Clear-Host
     $t = $script:Theme
 
     Write-Host ''
-    Write-Host '  Aaron System Utility' -ForegroundColor $t.Title
-    Write-Host "  v$($script:ASUVersion)" -ForegroundColor $t.Muted
+    Write-Host '  Aaron System Assistant' -ForegroundColor $t.Title
+    Write-Host "  v$($script:ASAVersion)" -ForegroundColor $t.Muted
     Write-Host ''
     Write-Host '  ────────────────────────────────────' -ForegroundColor $t.Muted
     Write-Host ''
@@ -135,7 +151,7 @@ function Show-About {
     Write-Host "  Log Level  $($script:Config.LoggingLevel)" -ForegroundColor $t.Normal
     Write-Host "  Modules    $($script:MenuItems.Count) loaded" -ForegroundColor $t.Normal
     Write-Host ''
-    Write-Host '  Portable Windows maintenance tool.' -ForegroundColor $t.Muted
+    Write-Host '  Your PC, now with a brain.' -ForegroundColor $t.Muted
     Write-Host '  Destructive actions always ask for confirmation.' -ForegroundColor $t.Muted
     Write-Host ''
     Pause
@@ -146,8 +162,8 @@ function Show-MainMenu {
     $t = $script:Theme
 
     Write-Host ''
-    Write-Host '  Aaron System Utility' -ForegroundColor $t.Title
-    Write-Host "  v$($script:ASUVersion)" -ForegroundColor $t.Muted
+    Write-Host '  Aaron System Assistant' -ForegroundColor $t.Title
+    Write-Host "  v$($script:ASAVersion)" -ForegroundColor $t.Muted
     Write-Host ''
     Write-Host '  ────────────────────────────────────' -ForegroundColor $t.Muted
     Write-Host ''
@@ -168,7 +184,7 @@ function Show-MainMenu {
     Write-Host ''
 }
 
-Write-ASULog "ASU v$($script:ASUVersion) starting" -Level Info
+Write-ASALog "ASA v$($script:ASAVersion) starting" -Level Info
 
 do {
     Show-MainMenu
@@ -176,8 +192,8 @@ do {
 
     if ($choice -eq '0') {
         Write-Host ''
-        Write-Host '  Exiting ASU. Goodbye!' -ForegroundColor $script:Theme.Warning
-        Write-ASULog 'ASU exited by user' -Level Info
+        Write-Host '  Exiting ASA. Goodbye!' -ForegroundColor $script:Theme.Warning
+        Write-ASALog 'ASA exited by user' -Level Info
         exit 0
     }
     if ($choice -match '^[Aa]$') {
@@ -196,7 +212,7 @@ do {
         & $selected.Command
     } catch {
         Write-Host "  Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor $script:Theme.Error
-        Write-ASULog "Error in $($selected.Command): $_" -Level Error
+        Write-ASALog "Error in $($selected.Command): $_" -Level Error
         Pause
     }
 } while ($true)

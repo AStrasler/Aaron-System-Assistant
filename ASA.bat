@@ -1,5 +1,5 @@
 @echo off
-title Aaron System Utility
+title Aaron System Assistant
 cd /d "%~dp0"
 
 where powershell >nul 2>&1
@@ -10,4 +10,4 @@ if %errorlevel% neq 0 (
 )
 
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-  "Start-Process powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File \"%~dp0ASU.ps1\"' -Verb RunAs"
+  "Start-Process powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File \"%~dp0ASA.ps1\"' -Verb RunAs"
