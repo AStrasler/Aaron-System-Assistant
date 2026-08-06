@@ -1,13 +1,36 @@
 # LicenseCheck.psm1 — ASA Licensing Module (Keymint + Local Fallback)
 # Supports: Free tier Keymint API, local fallback, and pause system
 
+# ---[ Load .env file ]---
+function Load-EnvFile {
+    param([string]$Path = "$PSScriptRoot\..\.env")
+
+    if (Test-Path $Path) {
+        $lines = Get-Content $Path -ErrorAction SilentlyContinue
+        foreach ($line in $lines) {
+            if ($line -match '^\s*([^#=]+)=(.*)$') {
+                $key = $matches[1].Trim()
+                $value = $matches[2].Trim()
+                [Environment]::SetEnvironmentVariable($key, $value, 'Process')
+            }
+        }
+        return $true
+    }
+    return $false
+}
+
+# Load .env at startup
+Load-EnvFile
+
 # ---[ Configuration ]---
 $script:LicensePath = Join-Path $PSScriptRoot "license.key"
 $script:PausePath = Join-Path $PSScriptRoot "paused.json"
 $script:KeymintBaseUrl = "https://api.keymint.dev/v1"  # Update if different
-$script:KeymintApiKey = km_live_fc7f7db7de18fd7dcdf520635b8d0351 # Set this environment variable!
 
-# If no env var, try reading from a local config file
+# Get API key from environment variable (loaded from .env)
+$script:KeymintApiKey = $env:KEYMINT_API_KEY
+
+# Fallback to config file if env var is not set
 if (-not $script:KeymintApiKey) {
     $configPath = Join-Path $PSScriptRoot "keymint.config.json"
     if (Test-Path $configPath) {
