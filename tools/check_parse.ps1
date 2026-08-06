@@ -1,4 +1,4 @@
-$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definition)
+﻿$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definition)
 $path = Join-Path $root 'ASA.ps1'
 $tokens = $null
 $errors = $null

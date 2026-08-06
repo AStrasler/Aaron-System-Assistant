@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Updates module for ASA
     - Show-UpdatesMenu: list pending updates

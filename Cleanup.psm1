@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Cleanup module for ASA
 #>

@@ -1,4 +1,4 @@
-# Utilities.psm1 — Core helper functions for ASA
+﻿# Utilities.psm1 — Core helper functions for ASA
 
 function Set-ASAConsoleTheme {
     <#

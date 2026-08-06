@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Startup management module for ASA
     List startup items and optionally disable selected Run-key entries.

@@ -1,4 +1,4 @@
-# fix-smart-quotes.ps1 — Replaces typographic "smart quotes" with straight
+﻿# fix-smart-quotes.ps1 — Replaces typographic "smart quotes" with straight
 # ASCII quotes across all .ps1/.psm1 files. Run from the repo root.
 #
 # Usage:  powershell -NoProfile -File .\fix-smart-quotes.ps1

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Reports module for ASA
 #>

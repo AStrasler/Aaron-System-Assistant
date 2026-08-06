@@ -1,4 +1,4 @@
-# add-utf8-bom.ps1 — Re-saves every .ps1/.psm1 with a UTF-8 BOM.
+﻿# add-utf8-bom.ps1 — Re-saves every .ps1/.psm1 with a UTF-8 BOM.
 #
 # Windows PowerShell 5.1 misreads UTF-8 files that lack a BOM using the
 # system's default ANSI codepage instead of UTF-8. Since these scripts

@@ -1,4 +1,4 @@
-$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definition)
+﻿$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definition)
 Get-ChildItem -Path $root -Filter *.psm1 -File | ForEach-Object {
     $path = $_.FullName
     Write-Output "Importing: $path"

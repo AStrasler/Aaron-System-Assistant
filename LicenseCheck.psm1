@@ -1,4 +1,4 @@
-# LicenseCheck.psm1 — ASA Licensing Module (Keymint + Local Fallback)
+﻿# LicenseCheck.psm1 — ASA Licensing Module (Keymint + Local Fallback)
 # Supports: Free tier Keymint API, local fallback, and pause system
 
 # ---[ Load .env file ]---

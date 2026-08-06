@@ -1,4 +1,4 @@
-# IntentEngine.psm1 — Natural Language Parser for ASA
+﻿# IntentEngine.psm1 — Natural Language Parser for ASA
 
 $script:IntentMap = @{
     # ---[ Cleanup ]---

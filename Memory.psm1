@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Memory analysis module for ASA
 #>

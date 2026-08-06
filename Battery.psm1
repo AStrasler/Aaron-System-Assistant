@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Battery analysis module for ASA
 #>

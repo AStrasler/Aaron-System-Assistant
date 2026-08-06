@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Network diagnostics module for ASA
 #>

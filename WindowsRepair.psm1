@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Windows Repair module for ASA
 #>
