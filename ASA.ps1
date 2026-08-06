@@ -1,5 +1,8 @@
 #Requires -Version 5.1
 
+# Manually load the memory script so the function is definitely available
+. .\Memory.ps1
+
 <#
 .SYNOPSIS
     Aaron System Assistant (ASA) - Main launcher
@@ -209,7 +212,8 @@ do {
     }
 
     try {
-        & $selected.Command
+        # THE FIX: Invoke-Expression forces the string to run as a command
+        Invoke-Expression -Command $selected.Command
     } catch {
         Write-Host "  Error in $($selected.Name): $($_.Exception.Message)" -ForegroundColor $script:Theme.Error
         Write-ASALog "Error in $($selected.Command): $_" -Level Error
